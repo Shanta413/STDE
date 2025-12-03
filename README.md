@@ -8,9 +8,8 @@ Software Test Documentation Evaluator
 ### **1️⃣ Backend (Spring Boot)**
 
 #### **Requirements**
-- Java 17 or Java 21
-- Maven wrapper included (`mvnw`)
-- PostgreSQL (optional depending on your config)
+- Java 21
+
 
 #### **Run Backend**
 ```sh
