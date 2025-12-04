@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import AIEvaluate from "./pages/AIEvaluate";
 import Profile from "./pages/Profile";
 import TestEvaluation from "./pages/TestEvaluation";
+import Classroom from "./pages/Classroom"; // ✅ NEW PAGE IMPORT
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -27,7 +28,7 @@ export default function App() {
           </ProtectedRoute>
         } 
       />
-      
+
       <Route 
         path="/profile" 
         element={
@@ -37,6 +38,17 @@ export default function App() {
         } 
       />
 
+      {/* ✅ NEW: Classroom Page */}
+      <Route 
+        path="/classroom" 
+        element={
+          <ProtectedRoute>
+            <Classroom />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Dev Test Page (not protected) */}
       <Route path="/test-eval" element={<TestEvaluation />} />
 
       {/* 404 */}
