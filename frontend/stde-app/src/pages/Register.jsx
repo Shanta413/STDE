@@ -36,12 +36,13 @@ export default function Register() {
         fullName,
         email,
         password,
+        userType: 'STUDENT',
       });
       
       console.log("Registration successful:", response);
       
-      // Redirect to login page after successful registration
-      navigate("/login", { 
+      // Redirect to student login page after successful registration
+      navigate("/login/student", { 
         state: { message: "Registration successful! Please log in." } 
       });
     } catch (err) {
@@ -127,9 +128,12 @@ export default function Register() {
           </div>
 
           <div className="welcome">
-            <h2>Create account</h2>
+            <h2>Student Registration</h2>
             <p>
-              Already have an account? <Link to="/login">Log in</Link>
+              Already have an account? <Link to="/login/student">Log in</Link>
+            </p>
+            <p className="role-switch">
+              Are you a teacher? <Link to="/register/teacher">Register here</Link>
             </p>
           </div>
 
