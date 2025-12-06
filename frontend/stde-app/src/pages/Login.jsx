@@ -17,14 +17,32 @@ export default function Login() {
     setLoading(true);
 
     try {
+      // Authenticate with backend
       const response = await authService.login({ email, password });
-      console.log("Login successful:", response);
-      
-      // Redirect to AI Evaluate page after successful login
+
+      // Depending on your backend, you might need this:
+      // const user = response.user; // if backend returns { user: {...}, token: "..." }
+      // If backend returns user object directly, just use "response"
+
+      const user = response.user ? response.user : response; // Handles both structures
+
+      // Allow only students to log in here
+      if (user.userType !== "STUDENT") {
+        setError("This login is for students only. Please use the correct login page.");
+        setLoading(false);
+        return;
+      }
+
+      // Save user and token to localStorage if needed
+      localStorage.setItem("user", JSON.stringify(user));
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+      }
+
+      // Redirect to student dashboard
       navigate("/ai-evaluate");
     } catch (err) {
-      console.error("Login error:", err);
-      setError(err || "Invalid email or password. Please try again.");
+      setError("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -49,47 +67,15 @@ export default function Login() {
 
           <div className="features">
             <div className="feature-item">
-              <div className="checkmark">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M13.5 4L6 11.5L2.5 8"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+              <div className="checkmark">✔</div>
               <p>Automated test case evaluation</p>
             </div>
-
             <div className="feature-item">
-              <div className="checkmark">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M13.5 4L6 11.5L2.5 8"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+              <div className="checkmark">✔</div>
               <p>Comprehensive quality metrics</p>
             </div>
-
             <div className="feature-item">
-              <div className="checkmark">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M13.5 4L6 11.5L2.5 8"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+              <div className="checkmark">✔</div>
               <p>Instant feedback and recommendations</p>
             </div>
           </div>
@@ -107,23 +93,26 @@ export default function Login() {
           <div className="welcome">
             <h2>Student Login</h2>
             <p>
-              Don't have an account? <Link to="/register/student">Sign up</Link>
+              Don't have an account?{" "}
+              <Link to="/register/student">Sign up</Link>
             </p>
             <p className="role-switch">
-              Are you a teacher? <Link to="/login/teacher">Login here</Link>
+              Are you a teacher?{" "}
+              <Link to="/login/teacher">Login here</Link>
             </p>
           </div>
 
           <form className="login-form" onSubmit={handleSubmit}>
             {error && (
-              <div className="error-message" style={{
-                backgroundColor: '#fee',
-                color: '#c33',
-                padding: '12px',
-                borderRadius: '8px',
-                marginBottom: '16px',
-                fontSize: '14px'
-              }}>
+              <div className="error-message"
+                style={{
+                  backgroundColor: '#fee',
+                  color: '#c33',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  marginBottom: '16px',
+                  fontSize: '14px'
+                }}>
                 {error}
               </div>
             )}
@@ -141,13 +130,7 @@ export default function Login() {
             </div>
 
             <div className="form-group">
-              <div className="password-label">
-                <label>Password</label>
-                <div className="forget-link">
-                  <a href="#">Forget?</a>
-                </div>
-              </div>
-
+              <label>Password</label>
               <div className="password-input">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -162,45 +145,15 @@ export default function Login() {
                   className="toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={loading}
+                  tabIndex={-1}
                 >
-                  {showPassword ? (
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path
-                        d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <line
-                        x1="1"
-                        y1="1"
-                        x2="23"
-                        y2="23"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  ) : (
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path
-                        d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="3"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  )}
+                  {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="submit-btn"
               disabled={loading}
             >
