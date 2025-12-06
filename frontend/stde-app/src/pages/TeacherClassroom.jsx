@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "../css/TeacherClassroom.css";
 
+console.log("TeacherClassroom loaded");
+
+
 export default function TeacherClassroom() {
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);

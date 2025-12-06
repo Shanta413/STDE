@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import "../css/TeacherLogin.css";
 
-export default function Login() {
+export default function TeacherLogin() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -12,27 +12,37 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const response = await authService.login({ email, password });
-      console.log("Login successful:", response);
-      
-      // Redirect to Teacher Classroom page after successful login
-      navigate("/teacher/classroom");
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err || "Invalid email or password. Please try again.");
-    } finally {
+  try {
+    const response = await authService.login({ email, password });
+    console.log("Login successful:", response);
+
+    const user = response.user;
+
+    // Validate strictly for TEACHER
+    if (user.userType !== "TEACHER") {
+      setError("This login is only for teachers. Please use the student login page.");
       setLoading(false);
+      return;
     }
-  };
 
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", response.token);
+
+    navigate("/teacher/classroom");
+
+  } catch (err) {
+    console.error("Login error:", err);
+    setError("Invalid email or password. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="login-container">
-      {/* Left Panel */}
       <div className="left-panel">
         <div className="background-pattern">
           <div className="pattern-box box-1"></div>
@@ -43,60 +53,17 @@ export default function Login() {
         <div className="content">
           <h1 className="title">AI-Powered Documentation Analysis</h1>
           <p className="subtitle">
-            Revolutionize your software testing workflow with intelligent
-            evaluation and insights powered by advanced AI technology.
+            Evaluate documents with AI, streamline grading, and improve outcomes.
           </p>
 
           <div className="features">
-            <div className="feature-item">
-              <div className="checkmark">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M13.5 4L6 11.5L2.5 8"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-              <p>Automated test case evaluation</p>
-            </div>
-
-            <div className="feature-item">
-              <div className="checkmark">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M13.5 4L6 11.5L2.5 8"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-              <p>Comprehensive quality metrics</p>
-            </div>
-
-            <div className="feature-item">
-              <div className="checkmark">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M13.5 4L6 11.5L2.5 8"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-              <p>Instant feedback and recommendations</p>
-            </div>
+            <div className="feature-item"><div className="checkmark">✔</div>AI grading insights</div>
+            <div className="feature-item"><div className="checkmark">✔</div>Automated scoring</div>
+            <div className="feature-item"><div className="checkmark">✔</div>Classroom integration</div>
           </div>
         </div>
       </div>
 
-      {/* Right Panel */}
       <div className="right-panel">
         <div className="form-container">
           <div className="logo">
@@ -107,23 +74,19 @@ export default function Login() {
           <div className="welcome">
             <h2>Teacher Login</h2>
             <p>
-              Don't have an account? <Link to="/register/teacher">Sign up</Link>
+              Don't have an account?{" "}
+              <Link to="/register/teacher">Sign up</Link>
             </p>
+
             <p className="role-switch">
-              Are you a student? <Link to="/login/student">Login here</Link>
+              Are you a student?{" "}
+              <Link to="/login/student">Login here</Link>
             </p>
           </div>
 
           <form className="login-form" onSubmit={handleSubmit}>
             {error && (
-              <div className="error-message" style={{
-                backgroundColor: '#fee',
-                color: '#c33',
-                padding: '12px',
-                borderRadius: '8px',
-                marginBottom: '16px',
-                fontSize: '14px'
-              }}>
+              <div className="error-message">
                 {error}
               </div>
             )}
@@ -134,73 +97,38 @@ export default function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="Teacher email"
                 required
                 disabled={loading}
               />
             </div>
 
             <div className="form-group">
-              <div className="password-label">
-                <label>Password</label>
-                <div className="forget-link">
-                  <a href="#">Forget?</a>
-                </div>
-              </div>
+              <label>Password</label>
 
               <div className="password-input">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder="Enter password"
                   required
                   disabled={loading}
                 />
+
                 <button
                   type="button"
                   className="toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={loading}
                 >
-                  {showPassword ? (
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path
-                        d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <line
-                        x1="1"
-                        y1="1"
-                        x2="23"
-                        y2="23"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  ) : (
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path
-                        d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="3"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  )}
+                  {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="submit-btn"
               disabled={loading}
             >

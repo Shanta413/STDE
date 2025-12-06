@@ -3,14 +3,17 @@ import authService from "../services/authService";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const isAuthenticated = authService.isAuthenticated();
-  const user = authService.getCurrentUser(); // user must include {role: "STUDENT" or "TEACHER"}
+  const user = authService.getCurrentUser();
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login/student" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // If role does not match → redirect to login or dashboard
+  // allowedRoles example: ["TEACHER"] or ["STUDENT"]
+  if (allowedRoles && !allowedRoles.includes(user.userType)) {
+    // If wrong role, redirect to their main page
+    if (user.userType === "STUDENT") return <Navigate to="/ai-evaluate" replace />;
+    if (user.userType === "TEACHER") return <Navigate to="/teacher/classroom" replace />;
     return <Navigate to="/login/student" replace />;
   }
 
