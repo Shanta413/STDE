@@ -1,62 +1,37 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/authService";
-import "../css/Register.css";
+import "../css/TeacherLogin.css";
 
-export default function Register() {
+export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [familyName, setFamilyName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    // Validation
-    if (password !== confirmPassword) {
-      setError("Passwords do not match!");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const response = await authService.register({
-        firstName,
-        familyName,
-        email,
-        password,
-        userType: 'STUDENT',
-      });
+      const response = await authService.login({ email, password });
+      console.log("Login successful:", response);
       
-      console.log("Registration successful:", response);
-      
-      // Redirect to student login page after successful registration
-      navigate("/login/student", { 
-        state: { message: "Registration successful! Please log in." } 
-      });
+      // Redirect to Teacher Classroom page after successful login
+      navigate("/teacher/classroom");
     } catch (err) {
-      console.error("Registration error:", err);
-      setError(err || "Registration failed. Please try again.");
+      console.error("Login error:", err);
+      setError(err || "Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="register-container">
+    <div className="login-container">
       {/* Left Panel */}
       <div className="left-panel">
         <div className="background-pattern">
@@ -66,16 +41,16 @@ export default function Register() {
         </div>
 
         <div className="content">
-          <h1 className="title">Join the Future of Testing</h1>
+          <h1 className="title">AI-Powered Documentation Analysis</h1>
           <p className="subtitle">
-            Get started with our AI-powered platform and transform how you
-            evaluate software testing documentation.
+            Revolutionize your software testing workflow with intelligent
+            evaluation and insights powered by advanced AI technology.
           </p>
 
           <div className="features">
             <div className="feature-item">
               <div className="checkmark">
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
                     d="M13.5 4L6 11.5L2.5 8"
                     stroke="white"
@@ -85,12 +60,12 @@ export default function Register() {
                   />
                 </svg>
               </div>
-              <p>Intelligent document analysis</p>
+              <p>Automated test case evaluation</p>
             </div>
 
             <div className="feature-item">
               <div className="checkmark">
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
                     d="M13.5 4L6 11.5L2.5 8"
                     stroke="white"
@@ -100,12 +75,12 @@ export default function Register() {
                   />
                 </svg>
               </div>
-              <p>Real-time quality feedback</p>
+              <p>Comprehensive quality metrics</p>
             </div>
 
             <div className="feature-item">
               <div className="checkmark">
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
                     d="M13.5 4L6 11.5L2.5 8"
                     stroke="white"
@@ -115,7 +90,7 @@ export default function Register() {
                   />
                 </svg>
               </div>
-              <p>Advanced reporting tools</p>
+              <p>Instant feedback and recommendations</p>
             </div>
           </div>
         </div>
@@ -130,16 +105,16 @@ export default function Register() {
           </div>
 
           <div className="welcome">
-            <h2>Student Registration</h2>
+            <h2>Teacher Login</h2>
             <p>
-              Already have an account? <Link to="/login/student">Log in</Link>
+              Don't have an account? <Link to="/register/teacher">Sign up</Link>
             </p>
             <p className="role-switch">
-              Are you a teacher? <Link to="/register/teacher">Register here</Link>
+              Are you a student? <Link to="/login/student">Login here</Link>
             </p>
           </div>
 
-          <form className="register-form" onSubmit={handleSubmit}>
+          <form className="login-form" onSubmit={handleSubmit}>
             {error && (
               <div className="error-message" style={{
                 backgroundColor: '#fee',
@@ -154,35 +129,8 @@ export default function Register() {
             )}
 
             <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
+              <label>Email</label>
               <input
-                id="firstName"
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Enter your first name"
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="familyName">Family Name</label>
-              <input
-                id="familyName"
-                type="text"
-                value={familyName}
-                onChange={(e) => setFamilyName(e.target.value)}
-                placeholder="Enter your family name"
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -193,14 +141,19 @@ export default function Register() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <div className="password-label">
+                <label>Password</label>
+                <div className="forget-link">
+                  <a href="#">Forget?</a>
+                </div>
+              </div>
+
               <div className="password-input">
                 <input
-                  id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Create a password"
+                  placeholder="Enter your password"
                   required
                   disabled={loading}
                 />
@@ -211,61 +164,6 @@ export default function Register() {
                   disabled={loading}
                 >
                   {showPassword ? (
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path
-                        d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="1"
-                        y1="1"
-                        x2="23"
-                        y2="23"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  ) : (
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path
-                        d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="3"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
-              <div className="password-input">
-                <input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
-                  required
-                  disabled={loading}
-                />
-                <button
-                  type="button"
-                  className="toggle-password"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  disabled={loading}
-                >
-                  {showConfirmPassword ? (
                     <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
                       <path
                         d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
@@ -306,7 +204,7 @@ export default function Register() {
               className="submit-btn"
               disabled={loading}
             >
-              {loading ? "Creating account..." : "Create account"}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 

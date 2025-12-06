@@ -5,11 +5,11 @@ const authService = {
   register: async (userData) => {
     try {
       const response = await api.post('/auth/register', {
-        firstname: userData.fullName.split(' ')[0],
-        lastname: userData.fullName.split(' ').slice(1).join(' ') || userData.fullName.split(' ')[0],
+        firstname: userData.firstName,
+        lastname: userData.familyName,
         email: userData.email,
         password: userData.password,
-        userType: 'STUDENT', // or 'TEACHER' based on your needs
+        userType: userData.userType || 'STUDENT',
       });
       return response.data;
     } catch (error) {
@@ -49,7 +49,7 @@ const authService = {
     return userStr ? JSON.parse(userStr) : null;
   },
 
-  // Get auth token (Added this method)
+  // Get auth token
   getToken: () => {
     return localStorage.getItem('token');
   },
@@ -57,6 +57,12 @@ const authService = {
   // Check if user is authenticated
   isAuthenticated: () => {
     return !!localStorage.getItem('token');
+  },
+
+  // Get user type
+  getUserType: () => {
+    const user = authService.getCurrentUser();
+    return user?.userType || null;
   },
 };
 

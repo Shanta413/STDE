@@ -105,9 +105,12 @@ export default function Login() {
           </div>
 
           <div className="welcome">
-            <h2>Welcome back</h2>
+            <h2>Student Login</h2>
             <p>
-              Don't have an account? <Link to="/register">Sign up</Link>
+              Don't have an account? <Link to="/register/student">Sign up</Link>
+            </p>
+            <p className="role-switch">
+              Are you a teacher? <Link to="/login/teacher">Login here</Link>
             </p>
           </div>
 
