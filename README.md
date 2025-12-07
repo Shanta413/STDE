@@ -26,4 +26,3 @@ npm install axios
 
 npm run dev
 
-test
