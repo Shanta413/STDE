@@ -79,7 +79,8 @@ body {
   max-width: 32rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 4rem;
   height: 100%;
 }
 
@@ -317,6 +318,6 @@ body {
   .left-panel {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
