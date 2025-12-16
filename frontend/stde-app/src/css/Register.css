@@ -79,7 +79,8 @@ body {
   max-width: 32rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 4rem;
   height: 100%;
 }
 
@@ -136,9 +137,10 @@ body {
 .right-panel {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  justify-content: flex-start;
+  padding: 4rem 2rem 2rem;
   background-color: #f9fafb;
 }
 
@@ -317,6 +319,7 @@ body {
   .left-panel {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
   }
 }
