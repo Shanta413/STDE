@@ -4,7 +4,8 @@ export default function SocialButton({
   provider = 'google', 
   onClick, 
   disabled = false,
-  text = null 
+  text = null,
+  delay = 0
 }) {
   const providerConfig = {
     google: {
@@ -27,7 +28,8 @@ export default function SocialButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`social-button social-button-${provider}`}
+      className={`social-button social-button-${provider} animate-slide-in`}
+      style={{ animationDelay: `${delay}ms` }}
     >
       <span className="social-button-icon">{config.icon}</span>
       <span className="social-button-text">{text || config.label}</span>

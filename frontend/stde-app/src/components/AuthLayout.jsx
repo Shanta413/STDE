@@ -43,11 +43,13 @@ export default function AuthLayout({
           )}
 
           <div className="auth-branding">
-            <h1 className="auth-title">{title}</h1>
-            <p className="auth-subtitle">{subtitle}</p>
+            <h1 className="auth-title animate-fade-in-down">{title}</h1>
+            <p className="auth-subtitle animate-fade-in-down" style={{ animationDelay: '200ms' }}>{subtitle}</p>
 
             {features.length > 0 && (
-              <FeatureList features={features} variant="dark" />
+              <div className="animate-slide-in" style={{ animationDelay: '400ms' }}>
+                <FeatureList features={features} variant="dark" delay={500} />
+              </div>
             )}
           </div>
         </div>

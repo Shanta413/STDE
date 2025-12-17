@@ -78,13 +78,13 @@ export default function TeacherRegister() {
     >
       <div className="auth-form-wrapper">
         {/* Logo */}
-        <div className="auth-logo">
+        <div className="auth-logo animate-slide-in" style={{ animationDelay: '100ms' }}>
           <div className="auth-logo-icon">S</div>
           <span className="auth-logo-text">STDE</span>
         </div>
 
         {/* Header */}
-        <div className="auth-header">
+        <div className="auth-header animate-slide-in" style={{ animationDelay: '200ms' }}>
           <h2 className="auth-form-title">Create Teacher Account</h2>
           <p className="auth-form-subtitle">
             Already have an account?{' '}
@@ -93,7 +93,7 @@ export default function TeacherRegister() {
         </div>
 
         {/* Error Message */}
-        {error && <div className="auth-error">{error}</div>}
+        {error && <div className="auth-error animate-fade-in">{error}</div>}
 
         {/* Form */}
         <form className="auth-form" onSubmit={handleSubmit}>
@@ -106,6 +106,8 @@ export default function TeacherRegister() {
               onChange={(e) => updateField('firstName', e.target.value)}
               required
               disabled={loading}
+              className="animate-slide-in"
+              style={{ animationDelay: '300ms' }}
             />
             <InputField
               label="Last Name"
@@ -115,6 +117,8 @@ export default function TeacherRegister() {
               onChange={(e) => updateField('lastName', e.target.value)}
               required
               disabled={loading}
+              className="animate-slide-in"
+              style={{ animationDelay: '350ms' }}
             />
           </div>
 
@@ -126,6 +130,8 @@ export default function TeacherRegister() {
             onChange={(e) => updateField('email', e.target.value)}
             required
             disabled={loading}
+            className="animate-slide-in"
+            style={{ animationDelay: '400ms' }}
           />
 
           <InputField
@@ -136,6 +142,8 @@ export default function TeacherRegister() {
             onChange={(e) => updateField('employeeId', e.target.value)}
             required
             disabled={loading}
+            className="animate-slide-in"
+            style={{ animationDelay: '450ms' }}
           />
 
           <InputField
@@ -146,6 +154,8 @@ export default function TeacherRegister() {
             onChange={(e) => updateField('department', e.target.value)}
             required
             disabled={loading}
+            className="animate-slide-in"
+            style={{ animationDelay: '500ms' }}
           />
 
           <PasswordInput
@@ -155,6 +165,8 @@ export default function TeacherRegister() {
             onChange={(e) => updateField('password', e.target.value)}
             required
             disabled={loading}
+            className="animate-slide-in"
+            style={{ animationDelay: '550ms' }}
           />
 
           <PasswordInput
@@ -164,17 +176,21 @@ export default function TeacherRegister() {
             onChange={(e) => updateField('confirmPassword', e.target.value)}
             required
             disabled={loading}
+            className="animate-slide-in"
+            style={{ animationDelay: '600ms' }}
           />
 
-          <button
-            type="submit"
-            className="auth-submit-btn"
-            disabled={loading}
-          >
-            {loading ? 'Creating account...' : 'Create Account'}
-          </button>
+          <div className="animate-slide-in" style={{ animationDelay: '650ms' }}>
+            <button
+              type="submit"
+              className="auth-submit-btn"
+              disabled={loading}
+            >
+              {loading ? 'Creating account...' : 'Create Account'}
+            </button>
+          </div>
 
-          <div className="auth-divider">
+          <div className="auth-divider animate-slide-in" style={{ animationDelay: '700ms' }}>
             <span>OR</span>
           </div>
 
@@ -183,17 +199,18 @@ export default function TeacherRegister() {
             onClick={handleGoogleSignup}
             disabled={loading}
             text="Sign up with Google"
+            delay={750}
           />
         </form>
 
         {/* Switch Role */}
-        <p className="auth-switch-role">
+        <p className="auth-switch-role animate-slide-in" style={{ animationDelay: '850ms' }}>
           Are you a student?{' '}
           <Link to="/register/student" className="auth-link">Register here</Link>
         </p>
 
         {/* Footer */}
-        <p className="auth-footer">Capstone Project 2025</p>
+        <p className="auth-footer animate-slide-in" style={{ animationDelay: '950ms' }}>Capstone Project 2025</p>
       </div>
     </AuthLayout>
   );

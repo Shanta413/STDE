@@ -288,7 +288,46 @@ export default function ClassroomDetails() {
   const getStatusStyle = (s, sub) => { if (sub) return { backgroundColor: '#d1fae5', color: '#065f46' }; if (s === 'COMPLETED') return { backgroundColor: '#dbeafe', color: '#1e40af' }; return { backgroundColor: '#f3f4f6', color: '#4b5563' }; };
   const handleOpenDrive = () => window.open(`https://drive.google.com/drive/folders/${classroom.driveFolderId}`, '_blank');
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) {
+    return (
+      <>
+        <Sidebar />
+        <div className="teacher-classroom">
+          {/* Skeleton Header */}
+          <div className="classroom-header-details">
+            <div className="skeleton skeleton-btn" style={{ width: '80px', marginBottom: '1.5rem' }}></div>
+            <div className="header-content">
+              <div className="header-info" style={{ width: '100%' }}>
+                <div className="skeleton skeleton-title"></div>
+                <div className="skeleton skeleton-subtitle"></div>
+                <div className="skeleton skeleton-badge"></div>
+              </div>
+              <div className="skeleton skeleton-btn"></div>
+            </div>
+          </div>
+          
+          {/* Skeleton Banner */}
+           <div className="skeleton" style={{ height: '80px', borderRadius: '8px', marginBottom: '1.5rem' }}></div>
+
+          {/* Skeleton Tabs */}
+          <div className="tabs-container" style={{ border: 'none' }}>
+            <div className="skeleton skeleton-btn" style={{ width: '120px', marginRight: '1rem', background: 'transparent', borderBottom: '3px solid #e2e8f0' }}></div>
+            <div className="skeleton skeleton-btn" style={{ width: '120px', background: 'transparent' }}></div>
+          </div>
+
+          {/* Skeleton Table */}
+          <div className="table-container">
+            <div style={{ padding: '1.5rem' }}>
+              <div className="skeleton" style={{ height: '3rem', marginBottom: '1rem' }}></div>
+              <div className="skeleton" style={{ height: '3rem', marginBottom: '1rem' }}></div>
+              <div className="skeleton" style={{ height: '3rem', marginBottom: '1rem' }}></div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   if (!classroom) return <div className="error">Classroom not found.</div>;
 
   return (
@@ -296,7 +335,7 @@ export default function ClassroomDetails() {
       <Sidebar />
       <div className="teacher-classroom">
 
-        <div className="classroom-header-details">
+        <div className="classroom-header-details animate-fade-in-down">
           <button onClick={() => navigate(-1)} className="back-btn">Back</button>
 
           <div className="header-content">
@@ -325,16 +364,20 @@ export default function ClassroomDetails() {
 
         {/* Usage Banner for Students */}
         {!isTeacher && usageStats && (
-          <div style={{
-            background: 'linear-gradient(90deg, #f8fafc, #f1f5f9)',
-            border: '1px solid #cbd5e1',
-            borderRadius: '8px',
-            padding: '1rem 1.5rem',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
+          <div 
+            className="animate-slide-in"
+            style={{
+              background: 'linear-gradient(90deg, #f8fafc, #f1f5f9)',
+              border: '1px solid #cbd5e1',
+              borderRadius: '8px',
+              padding: '1rem 1.5rem',
+              marginBottom: '1.5rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              animationDelay: '100ms'
+            }}
+          >
             <div>
               <span style={{ fontWeight: '600', color: '#475569', fontSize: '0.9rem' }}>ANALYSIS QUOTA</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '4px' }}>
@@ -362,7 +405,7 @@ export default function ClassroomDetails() {
         )}
 
         {/* Tabs & Table (Keep exactly the same) */}
-        <div className="tabs-container">
+        <div className="tabs-container animate-slide-in" style={{ animationDelay: '200ms' }}>
           <button className={`tab-btn ${activeTab === 'submissions' ? 'active-tab' : ''}`} onClick={() => setActiveTab('submissions')}>
             {isTeacher ? "Submissions" : "My Work"}
           </button>
@@ -370,13 +413,17 @@ export default function ClassroomDetails() {
         </div>
 
         {activeTab === 'submissions' && (
-          <div className="table-container">
-            {submissions.length === 0 ? <div className="empty-state"><p>No documents found.</p></div> : (
+          <div className="table-container animate-slide-in" style={{ animationDelay: '300ms' }}>
+            {submissions.length === 0 ? <div className="empty-state animate-fade-in"><p>No documents found.</p></div> : (
               <table className="submissions-table">
                 <thead><tr>{isTeacher && <th>Student</th>}<th>Document</th><th>Date</th><th>Score</th><th>Status</th><th className="actions-header">Actions</th></tr></thead>
                 <tbody>
-                  {submissions.map((sub) => (
-                    <tr key={sub.id}>
+                  {submissions.map((sub, index) => (
+                    <tr 
+                      key={sub.id} 
+                      className="animate-slide-in" 
+                      style={{ animationDelay: `${400 + index * 50}ms`, opacity: 0, animationFillMode: 'forwards' }}
+                    >
                       {isTeacher && <td className="student-name">{sub.studentName}</td>}
                       <td><button className="document-link" onClick={() => handleOpenDocument(sub.driveFileId)}>{sub.filename}</button></td>
                       <td className="date">{sub.date}</td>
@@ -423,11 +470,19 @@ export default function ClassroomDetails() {
 
         {/* ... (Students Tab Content) ... */}
         {activeTab === 'students' && isTeacher && (
-          <div className="table-container">
-            {students.length === 0 ? <div className="empty-state"><p>No students.</p></div> : (
+          <div className="table-container animate-slide-in" style={{ animationDelay: '300ms' }}>
+            {students.length === 0 ? <div className="empty-state animate-fade-in"><p>No students.</p></div> : (
               <table className="submissions-table">
                 <thead><tr><th>Student Name</th><th>Email</th><th>Action</th></tr></thead>
-                <tbody>{students.map((s) => (<tr key={s.id}><td className="student-name">{s.name}</td><td>{s.email}</td><td><button className="action-btn" disabled>Remove</button></td></tr>))}</tbody>
+                <tbody>{students.map((s, index) => (
+                  <tr 
+                    key={s.id} 
+                    className="animate-slide-in"
+                    style={{ animationDelay: `${400 + index * 50}ms`, opacity: 0, animationFillMode: 'forwards' }}
+                  >
+                    <td className="student-name">{s.name}</td><td>{s.email}</td><td><button className="action-btn" disabled>Remove</button></td>
+                  </tr>
+                ))}</tbody>
               </table>
             )}
           </div>
@@ -436,8 +491,8 @@ export default function ClassroomDetails() {
 
       {/* Upload Modal (Same as before) */}
       {showUploadModal && (
-        <div className="modal-overlay" onClick={() => setShowUploadModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+        <div className="modal-overlay animate-fade-in" onClick={() => setShowUploadModal(false)}>
+          <div className="modal-content animate-slide-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
             <div className="modal-header"><h2>Upload Document</h2><button className="modal-close" onClick={() => setShowUploadModal(false)}>×</button></div>
             <div className="modal-body" style={{ textAlign: 'center', padding: '2rem' }}>
               {uploading ? <p>Uploading...</p> : (
@@ -454,14 +509,14 @@ export default function ClassroomDetails() {
 
       {/* Report Modal (Keep existing) */}
       {showReportModal && (
-        <div className="modal-overlay" onClick={() => setShowReportModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1000px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="modal-overlay animate-fade-in" onClick={() => setShowReportModal(false)}>
+          <div className="modal-content animate-slide-in" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1000px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
             <div className="modal-header"><h2>Evaluation Report</h2><button className="modal-close" onClick={() => setShowReportModal(false)}>×</button></div>
             <div className="modal-body" style={{ overflowY: 'auto', padding: '2rem', flex: 1, minHeight: 0, maxHeight: 'calc(90vh - 80px)' }}>
               {modalLoading ? <div className="loading-state"><div className="spinner"></div><p>Loading...</p></div> :
                 reportData && reportData.error ? <div className="error-state"><p>{reportData.message}</p></div> :
                   (
-                    <div className="report-content">
+                    <div className="report-content animate-fade-in">
                       <h3>{reportData?.filename}</h3>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
                         <ScoreBadge label="Overall" score={reportData.overallScore} isPrimary={true} />
