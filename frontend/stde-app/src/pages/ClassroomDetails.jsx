@@ -288,6 +288,32 @@ export default function ClassroomDetails() {
   const getStatusStyle = (s, sub) => { if (sub) return { backgroundColor: '#d1fae5', color: '#065f46' }; if (s === 'COMPLETED') return { backgroundColor: '#dbeafe', color: '#1e40af' }; return { backgroundColor: '#f3f4f6', color: '#4b5563' }; };
   const handleOpenDrive = () => window.open(`https://drive.google.com/drive/folders/${classroom.driveFolderId}`, '_blank');
 
+  // Remove Student Handler
+  const handleRemoveStudent = (studentId, studentName) => {
+    setConfirmModal({
+      isOpen: true,
+      isExiting: false,
+      title: 'Remove Student',
+      message: `Are you sure you want to remove "${studentName}" from this class?`,
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
+      confirmStyle: 'danger',
+      documentId: studentId,
+      onConfirm: () => executeRemoveStudent(studentId)
+    });
+  };
+
+  const executeRemoveStudent = async (studentId) => {
+    closeConfirmModal();
+    try {
+      await classroomService.removeStudent(id, studentId);
+      toast.success('Student removed successfully!');
+      loadStudents();
+    } catch (error) {
+      toast.error('Failed to remove student: ' + error);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -468,7 +494,7 @@ export default function ClassroomDetails() {
           </div>
         )}
 
-        {/* ... (Students Tab Content) ... */}
+        {/* Students Tab Content */}
         {activeTab === 'students' && isTeacher && (
           <div className="table-container animate-slide-in" style={{ animationDelay: '300ms' }}>
             {students.length === 0 ? <div className="empty-state animate-fade-in"><p>No students.</p></div> : (
@@ -480,7 +506,17 @@ export default function ClassroomDetails() {
                     className="animate-slide-in"
                     style={{ animationDelay: `${400 + index * 50}ms`, opacity: 0, animationFillMode: 'forwards' }}
                   >
-                    <td className="student-name">{s.name}</td><td>{s.email}</td><td><button className="action-btn" disabled>Remove</button></td>
+                    <td className="student-name">{s.name}</td>
+                    <td style={{ color: '#374151' }}>{s.email}</td>
+                    <td>
+                      <button
+                        className="action-btn"
+                        onClick={() => handleRemoveStudent(s.id, s.name)}
+                        style={{ backgroundColor: '#fee2e2', color: '#dc2626', border: '1px solid #fecaca' }}
+                      >
+                        Remove
+                      </button>
+                    </td>
                   </tr>
                 ))}</tbody>
               </table>

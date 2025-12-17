@@ -146,4 +146,21 @@ public class ClassroomService {
         classroom.getStudents().size(); 
         return classroom.getStudents();
     }
+
+    @Transactional
+    public void removeStudent(UUID classId, UUID studentId, UUID teacherId) {
+        // Verify teacher owns this classroom
+        Classroom classroom = classroomRepository.findByIdAndTeacherId(classId, teacherId)
+                .orElseThrow(() -> new SecurityException("Unauthorized: User does not own this classroom."));
+
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found."));
+
+        if (!classroom.getStudents().contains(student)) {
+            throw new IllegalArgumentException("Student is not enrolled in this class.");
+        }
+
+        classroom.getStudents().remove(student);
+        classroomRepository.save(classroom);
+    }
 }
