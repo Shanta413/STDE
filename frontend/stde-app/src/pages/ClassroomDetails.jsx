@@ -517,7 +517,7 @@ export default function ClassroomDetails() {
                 reportData && reportData.error ? <div className="error-state"><p>{reportData.message}</p></div> :
                   (
                     <div className="report-content animate-fade-in">
-                      <h3>{reportData?.filename}</h3>
+                      <h3 className="report-filename">{reportData?.filename}</h3>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
                         <ScoreBadge label="Overall" score={reportData.overallScore} isPrimary={true} />
                         <ScoreBadge label="Completeness" score={reportData.completenessScore} />
