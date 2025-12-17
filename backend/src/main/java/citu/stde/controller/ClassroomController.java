@@ -160,6 +160,24 @@ public class ClassroomController {
         }
     }
 
+    @DeleteMapping("/{classId}/students/{studentId}")
+    public ResponseEntity<?> removeStudent(
+            @PathVariable UUID classId, 
+            @PathVariable UUID studentId, 
+            Authentication authentication) {
+        try {
+            UUID teacherId = getUserId(authentication);
+            classroomService.removeStudent(classId, studentId, teacherId);
+            return ResponseEntity.ok(Map.of("message", "Student removed successfully"));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+        }
+    }
+
     private UUID getUserId(Authentication authentication) {
         String email = authentication.getName();
         return userRepository.getIdByEmail(email)

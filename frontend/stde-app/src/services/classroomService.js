@@ -69,6 +69,15 @@ const classroomService = {
       console.error("Failed to fetch class students", error);
       return [];
     }
+  },
+
+  removeStudent: async (classId, studentId) => {
+    try {
+      const response = await api.delete(`/classrooms/${classId}/students/${studentId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Failed to remove student';
+    }
   }
 };
 
