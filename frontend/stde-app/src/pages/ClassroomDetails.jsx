@@ -265,12 +265,12 @@ export default function ClassroomDetails() {
       showInput: true,
       inputValue: currentScore !== '-' ? String(currentScore) : '',
       inputPlaceholder: 'Enter score...',
-      onConfirm: () => executeOverride(documentId)
+      onConfirm: null // Will be handled by the updated ConfirmModal
     });
   };
 
-  const executeOverride = async (documentId) => {
-    const newScore = parseInt(confirmModal.inputValue);
+  const executeOverride = async (documentId, inputValue) => {
+    const newScore = parseInt(inputValue);
     if (isNaN(newScore) || newScore < 0 || newScore > 100) {
       toast.error('Please enter a valid score between 0 and 100');
       return;
@@ -305,9 +305,9 @@ export default function ClassroomDetails() {
               <div className="skeleton skeleton-btn"></div>
             </div>
           </div>
-          
+
           {/* Skeleton Banner */}
-           <div className="skeleton" style={{ height: '80px', borderRadius: '8px', marginBottom: '1.5rem' }}></div>
+          <div className="skeleton" style={{ height: '80px', borderRadius: '8px', marginBottom: '1.5rem' }}></div>
 
           {/* Skeleton Tabs */}
           <div className="tabs-container" style={{ border: 'none' }}>
@@ -364,7 +364,7 @@ export default function ClassroomDetails() {
 
         {/* Usage Banner for Students */}
         {!isTeacher && usageStats && (
-          <div 
+          <div
             className="animate-slide-in"
             style={{
               background: 'linear-gradient(90deg, #f8fafc, #f1f5f9)',
@@ -419,9 +419,9 @@ export default function ClassroomDetails() {
                 <thead><tr>{isTeacher && <th>Student</th>}<th>Document</th><th>Date</th><th>Score</th><th>Status</th><th className="actions-header">Actions</th></tr></thead>
                 <tbody>
                   {submissions.map((sub, index) => (
-                    <tr 
-                      key={sub.id} 
-                      className="animate-slide-in" 
+                    <tr
+                      key={sub.id}
+                      className="animate-slide-in"
                       style={{ animationDelay: `${400 + index * 50}ms`, opacity: 0, animationFillMode: 'forwards' }}
                     >
                       {isTeacher && <td className="student-name">{sub.studentName}</td>}
@@ -475,8 +475,8 @@ export default function ClassroomDetails() {
               <table className="submissions-table">
                 <thead><tr><th>Student Name</th><th>Email</th><th>Action</th></tr></thead>
                 <tbody>{students.map((s, index) => (
-                  <tr 
-                    key={s.id} 
+                  <tr
+                    key={s.id}
                     className="animate-slide-in"
                     style={{ animationDelay: `${400 + index * 50}ms`, opacity: 0, animationFillMode: 'forwards' }}
                   >
@@ -549,7 +549,10 @@ export default function ClassroomDetails() {
         confirmText={confirmModal.confirmText}
         cancelText={confirmModal.cancelText}
         confirmStyle={confirmModal.confirmStyle}
-        onConfirm={confirmModal.onConfirm}
+        onConfirm={confirmModal.showInput
+          ? () => executeOverride(confirmModal.documentId, confirmModal.inputValue)
+          : confirmModal.onConfirm
+        }
         onCancel={closeConfirmModal}
         showInput={confirmModal.showInput}
         inputValue={confirmModal.inputValue}
