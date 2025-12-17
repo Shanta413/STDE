@@ -1,0 +1,143 @@
+/* ========================================
+   ROLE CARD Component
+   ======================================== */
+
+.role-card {
+  position: relative;
+  cursor: pointer;
+  animation: slideIn 0.6s ease-out both;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Glow Effect */
+.role-card-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 1.5rem;
+  opacity: 0;
+  filter: blur(30px);
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.role-card:hover .role-card-glow {
+  opacity: 0.5;
+}
+
+/* Content Container */
+.role-card-content {
+  position: relative;
+  z-index: 1;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.role-card:hover .role-card-content {
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-4px);
+}
+
+/* Icon */
+.role-card-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.role-card-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+.role-card-icon.icon-scaled {
+  transform: scale(1.1);
+}
+
+/* Title */
+.role-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  margin: 0 0 1rem 0;
+}
+
+/* Description */
+.role-card-description {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  text-align: center;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
+}
+
+/* Features */
+.role-card-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.role-card-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.role-card-feature-dot {
+  width: 6px;
+  height: 6px;
+  background: #6366f1;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+/* Button */
+.role-card-button {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.role-card-button:hover {
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+  transform: scale(1.02);
+}
+
+.role-card-button:active {
+  transform: scale(0.98);
+}

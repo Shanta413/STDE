@@ -1,0 +1,54 @@
+/* ========================================
+   SOCIAL BUTTON Component
+   ======================================== */
+
+.social-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.social-button:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.social-button:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.social-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.social-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-button-text {
+  flex: 1;
+  text-align: center;
+}
+
+/* Google specific styling */
+.social-button-google {
+  /* Already styled with default */
+}
+
+.social-button-google:hover:not(:disabled) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

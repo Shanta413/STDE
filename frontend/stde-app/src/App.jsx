@@ -1,10 +1,13 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-// Pages
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+// NEW Auth Pages
+import LandingPage from "./pages/LandingPage";
+import StudentLogin from "./pages/StudentLogin";
+import StudentRegister from "./pages/StudentRegister";
 import TeacherLogin from "./pages/TeacherLogin";
 import TeacherRegister from "./pages/TeacherRegister";
+
+// Existing Pages (keep these imports from your current project)
 import StudentDashboard from "./pages/StudentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import Profile from "./pages/Profile";
@@ -22,10 +25,22 @@ import AdminLogin from "./pages/AdminLogin";
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login/student" replace />} />
+      {/* ===== LANDING PAGE - Role Selection ===== */}
+      <Route path="/" element={<LandingPage />} />
+      
+      {/* ===== OAuth Callback ===== */}
       <Route path="/auth/callback" element={<OAuthCallback />} />
 
-      {/* ADMIN ROUTES - Isolated */}
+      {/* ===== STUDENT AUTH ===== */}
+      <Route path="/login/student" element={<StudentLogin />} />
+      <Route path="/register/student" element={<StudentRegister />} />
+
+      {/* ===== TEACHER AUTH ===== */}
+      <Route path="/login/teacher" element={<TeacherLogin />} />
+      <Route path="/register/teacher" element={<TeacherRegister />} />
+
+      {/* ===== ADMIN AUTH (Hidden - accessible via direct URL) ===== */}
+      <Route path="/admin" element={<AdminLogin />} />
       <Route
         path="/admin/dashboard" 
         element={
@@ -34,27 +49,16 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route 
-        path="/admin"
-         element={<
-          AdminLogin />} 
-      />
 
-      {/* AUTH */}
-      <Route path="/login/student" element={<Login />} />
-      <Route path="/register/student" element={<Register />} />
-      <Route path="/login/teacher" element={<TeacherLogin />} />
-      <Route path="/register/teacher" element={<TeacherRegister />} />
-
-      {/* PASSWORD RESET */}
+      {/* ===== PASSWORD RESET ===== */}
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      
-      {/* Legacy */}
-      <Route path="/login" element={<Navigate to="/login/student" replace />} />
-      <Route path="/register" element={<Navigate to="/register/student" replace />} />
 
-      {/* STUDENT */}
+      {/* ===== LEGACY REDIRECTS ===== */}
+      <Route path="/login" element={<Navigate to="/" replace />} />
+      <Route path="/register" element={<Navigate to="/" replace />} />
+
+      {/* ===== STUDENT PROTECTED ROUTES ===== */}
       <Route
         path="/student/dashboard"
         element={
@@ -79,15 +83,8 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      
-      {/* SHARED */}
-      <Route 
-        path="/classroom/:id" 
-        element={
-        <ClassroomDetails />} 
-      />
 
-      {/* TEACHER */}
+      {/* ===== TEACHER PROTECTED ROUTES ===== */}
       <Route
         path="/teacher/dashboard" 
         element={
@@ -113,16 +110,10 @@ export default function App() {
         }
       />
 
-      {/* ✅ ADDED: ADMIN */}
-      <Route
-        path="/admin/dashboard" 
-        element={
-          <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
+      {/* ===== SHARED ROUTES ===== */}
+      <Route path="/classroom/:id" element={<ClassroomDetails />} />
 
+      {/* ===== 404 ===== */}
       <Route path="*" element={<h1>404 Page Not Found</h1>} />
     </Routes>
   );
