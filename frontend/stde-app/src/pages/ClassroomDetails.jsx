@@ -104,13 +104,16 @@ export default function ClassroomDetails() {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setShowUploadModal(false); // Close modal immediately
     setUploading(true);
+    const loadingId = toast.loading('Uploading Document. Please Wait.');
     try {
       await documentService.uploadDocument(file, id);
+      toast.dismiss(loadingId);
       toast.success('Document Uploaded Successfully!');
-      setShowUploadModal(false);
       loadClassroomData();
     } catch (error) {
+      toast.dismiss(loadingId);
       toast.error('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
@@ -138,13 +141,20 @@ export default function ClassroomDetails() {
   const pickerCallback = async (data) => {
     if (data.action === window.google.picker.Action.PICKED) {
       const doc = data.docs[0];
+      setShowUploadModal(false); // Close modal immediately
       setUploading(true);
+      const loadingId = toast.loading(`Importing "${doc.name}"...`);
       try {
         await documentService.uploadDriveFile(doc.id, id);
+        toast.dismiss(loadingId);
         toast.success(`Imported "${doc.name}" successfully!`);
-        setShowUploadModal(false);
         loadClassroomData();
-      } catch (error) { toast.error('Failed to import from Drive'); } finally { setUploading(false); }
+      } catch (error) {
+        toast.dismiss(loadingId);
+        toast.error('Failed to import from Drive');
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -164,12 +174,15 @@ export default function ClassroomDetails() {
 
     if (!window.confirm("Run AI Analysis? This uses 1 quota token.")) return;
     setProcessingId(documentId);
+    const loadingId = toast.loading('Running AI Analysis...');
     try {
       await evaluationService.evaluateDocument(documentId);
-      toast.success('Analysis complete!');
+      toast.dismiss(loadingId);
+      toast.success('Analysis Complete!');
       loadClassroomData();
       loadUsageStats(); // Refresh stats
     } catch (error) {
+      toast.dismiss(loadingId);
       toast.error('Analysis failed: ' + error.message);
     } finally {
       setProcessingId(null);

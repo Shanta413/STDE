@@ -18,19 +18,24 @@ export function ToastProvider({ children }) {
 
     const addToast = useCallback((message, type = 'info', duration = 4000) => {
         const id = Date.now() + Math.random();
+        const isLoading = type === 'loading';
+
         setToasts(prev => [...prev, { id, message, type, duration, isExiting: false }]);
 
-        // Start exit animation before removal
-        setTimeout(() => {
-            setToasts(prev => prev.map(t =>
-                t.id === id ? { ...t, isExiting: true } : t
-            ));
-        }, duration);
+        // Loading toasts don't auto-dismiss
+        if (!isLoading) {
+            // Start exit animation before removal
+            setTimeout(() => {
+                setToasts(prev => prev.map(t =>
+                    t.id === id ? { ...t, isExiting: true } : t
+                ));
+            }, duration);
 
-        // Actually remove after animation completes
-        setTimeout(() => {
-            setToasts(prev => prev.filter(t => t.id !== id));
-        }, duration + ANIMATION_DURATION);
+            // Actually remove after animation completes
+            setTimeout(() => {
+                setToasts(prev => prev.filter(t => t.id !== id));
+            }, duration + ANIMATION_DURATION);
+        }
 
         return id;
     }, []);
@@ -52,6 +57,8 @@ export function ToastProvider({ children }) {
         error: (message, duration) => addToast(message, 'error', duration),
         warning: (message, duration) => addToast(message, 'warning', duration),
         info: (message, duration) => addToast(message, 'info', duration),
+        loading: (message) => addToast(message, 'loading'),
+        dismiss: (id) => removeToast(id),
     };
 
     return (
@@ -73,4 +80,5 @@ export function ToastProvider({ children }) {
 }
 
 export default ToastContext;
+
 

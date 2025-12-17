@@ -28,10 +28,26 @@ const ICONS = {
             <line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
     ),
+    loading: (
+        <div className="loading-spinner">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v4" />
+                <path d="M12 18v4" />
+                <path d="M4.93 4.93l2.83 2.83" />
+                <path d="M16.24 16.24l2.83 2.83" />
+                <path d="M2 12h4" />
+                <path d="M18 12h4" />
+                <path d="M4.93 19.07l2.83-2.83" />
+                <path d="M16.24 7.76l2.83-2.83" />
+            </svg>
+        </div>
+    ),
 };
 
 export default function Toast({ message, type = 'info', isExiting = false, onClose }) {
-    return (
+    const isLoading = type === 'loading';
+
+    const toastContent = (
         <div className={`toast toast-${type} ${isExiting ? 'toast-exit' : ''}`}>
             <div className="toast-icon">
                 {ICONS[type]}
@@ -39,13 +55,27 @@ export default function Toast({ message, type = 'info', isExiting = false, onClo
             <div className="toast-content">
                 <span className="toast-message">{message}</span>
             </div>
-            <button className="toast-close" onClick={onClose} aria-label="Close">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-            </button>
+            {!isLoading && (
+                <button className="toast-close" onClick={onClose} aria-label="Close">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            )}
         </div>
     );
+
+    // Wrap loading toast in overlay backdrop
+    if (isLoading) {
+        return (
+            <div className={`toast-overlay ${isExiting ? 'toast-overlay-exit' : ''}`}>
+                {toastContent}
+            </div>
+        );
+    }
+
+    return toastContent;
 }
+
 
