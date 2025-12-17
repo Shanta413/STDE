@@ -27,4 +27,34 @@ public class OAuth2Controller {
         // Redirect to Spring Security's OAuth2 endpoint
         return new RedirectView("/oauth2/authorization/google");
     }
+
+    /**
+     * Endpoint for LINKING a Google account to an existing local account.
+     * This is different from login - it checks if the Google account is already in use.
+     */
+    @GetMapping("/link/{loginType}")
+    public RedirectView initiateOAuth2Link(
+            @PathVariable String loginType,
+            HttpServletResponse response) {
+        
+        // Store login type in a cookie
+        Cookie loginTypeCookie = new Cookie("oauthLoginType", loginType);
+        loginTypeCookie.setPath("/");
+        loginTypeCookie.setMaxAge(300);
+        loginTypeCookie.setHttpOnly(true);
+        loginTypeCookie.setSecure(false);
+        response.addCookie(loginTypeCookie);
+        
+        // Store mode as "link" to differentiate from normal login
+        Cookie modeCookie = new Cookie("oauthMode", "link");
+        modeCookie.setPath("/");
+        modeCookie.setMaxAge(300);
+        modeCookie.setHttpOnly(true);
+        modeCookie.setSecure(false);
+        response.addCookie(modeCookie);
+        
+        System.out.println("=== Setting OAuth LINK mode for: " + loginType + " ===");
+        
+        return new RedirectView("/oauth2/authorization/google");
+    }
 }

@@ -22,7 +22,7 @@ export default function Profile() {
       setFormData({ firstname: userData.firstname, lastname: userData.lastname });
     }
 
-    // LISTENER: Waits for the popup to say "Success!"
+    // LISTENER: Waits for the popup to say "Success!" or "Error"
     const handleMessage = async (event) => {
       // Security Check: Ignore messages from other websites
       if (event.origin !== window.location.origin) return;
@@ -62,6 +62,10 @@ export default function Profile() {
           localStorage.setItem('token', authService.getToken());
           toast.error('Failed to sync identity with Google account');
         }
+      } else if (event.data.type === 'GOOGLE_LINK_ERROR') {
+        // Handle error from Google linking (e.g., account already in use)
+        const errorMessage = event.data.error || 'Failed to connect Google Drive';
+        toast.error(errorMessage);
       }
     };
 
@@ -78,9 +82,9 @@ export default function Profile() {
     const left = (window.screen.width / 2) - (width / 2);
     const top = (window.screen.height / 2) - (height / 2);
 
-    // Open the backend endpoint in a popup
+    // Open the backend endpoint in a popup (LINK MODE to check for duplicates)
     window.open(
-      'http://localhost:8080/api/oauth2/login/student',
+      'http://localhost:8080/api/oauth2/link/student',
       'Connect Google Drive',
       `width=${width},height=${height},top=${top},left=${left}`
     );
@@ -145,34 +149,34 @@ export default function Profile() {
 
             {/* CONNECT BUTTON */}
             <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-            <button
-              onClick={handleConnectGoogle}
-              className="connect-drive-btn"
-              style={{
-                padding: '0.6rem 1rem',
-                backgroundColor: '#fff',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                color: '#374151',
-                fontWeight: '500',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginTop: '10px',
-                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 87.3 78">
-                <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da" />
-                <path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2l13.75 23.8z" fill="#00ac47" />
-                <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l3.85-6.65c.8-1.4 1.2-2.95 1.2-4.5h-27.5l13.75 23.8z" fill="#ea4335" />
-                <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-26.6 46.1c-.8 1.35-1.2 2.9-1.2 4.5h27.5L43.65 25z" fill="#00832d" />
-                <path d="M59.7 53.05h27.5c0-1.55-.4-3.1-1.2-4.5L59.4 2.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.05 28.05z" fill="#2684fc" />
-                <path d="M73.4 76.8L59.7 53.05H27.5l13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h18.5c1.6 0 3.15-.45 4.5-1.2z" fill="#ffba00" />
-              </svg>
-              Connect Google Drive
-            </button>
+              <button
+                onClick={handleConnectGoogle}
+                className="connect-drive-btn"
+                style={{
+                  padding: '0.6rem 1rem',
+                  backgroundColor: '#fff',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  color: '#374151',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginTop: '10px',
+                  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 87.3 78">
+                  <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da" />
+                  <path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2l13.75 23.8z" fill="#00ac47" />
+                  <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l3.85-6.65c.8-1.4 1.2-2.95 1.2-4.5h-27.5l13.75 23.8z" fill="#ea4335" />
+                  <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-26.6 46.1c-.8 1.35-1.2 2.9-1.2 4.5h27.5L43.65 25z" fill="#00832d" />
+                  <path d="M59.7 53.05h27.5c0-1.55-.4-3.1-1.2-4.5L59.4 2.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.05 28.05z" fill="#2684fc" />
+                  <path d="M73.4 76.8L59.7 53.05H27.5l13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h18.5c1.6 0 3.15-.45 4.5-1.2z" fill="#ffba00" />
+                </svg>
+                Connect Google Drive
+              </button>
             </div>
           </div>
 

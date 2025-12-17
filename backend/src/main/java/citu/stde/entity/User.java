@@ -32,6 +32,9 @@ public class User {
     @Column(name = "avatar_url", length = 500, nullable = true)
     private String avatarUrl;
 
+    @Column(name = "google_id", length = 255, unique = true)
+    private String googleId;
+
     @Column(name = "is_active")
     private Boolean isActive = true;
 

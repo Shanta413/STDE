@@ -13,6 +13,22 @@ export default function OAuthCallback() {
     const lastname = searchParams.get('lastname');
     const email = searchParams.get('email');
     const avatarUrl = searchParams.get('avatarUrl');
+    const error = searchParams.get('error'); // Check for error from backend
+
+    // Handle error case (e.g., Google account already in use)
+    if (error) {
+      if (window.opener) {
+        window.opener.postMessage({
+          type: 'GOOGLE_LINK_ERROR',
+          error: error
+        }, window.location.origin);
+        window.close();
+      } else {
+        // Normal flow - redirect to login with error
+        navigate('/login/student?error=' + encodeURIComponent(error));
+      }
+      return;
+    }
 
     if (token && userId) {
       const userData = {
@@ -32,7 +48,7 @@ export default function OAuthCallback() {
           token: token,
           user: userData
         }, window.location.origin); // Security: Only allow same origin
-        
+
         // Close the popup
         window.close();
       } else {

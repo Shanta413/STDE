@@ -39,6 +39,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String firstName = oAuth2User.getAttribute("given_name");
         String lastName = oAuth2User.getAttribute("family_name");
         String picture = oAuth2User.getAttribute("picture");
+        String googleId = oAuth2User.getAttribute("sub"); // Google's unique user ID
         
         // DEBUG: Print ALL cookies
         System.out.println("=== ALL COOKIES ===");
@@ -51,8 +52,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             System.out.println("NO COOKIES FOUND!");
         }
         
-        // Get login type from cookie
+        // Get login type and mode from cookies
         String loginPage = "student"; // Default
+        String oauthMode = "login"; // Default mode is login
+        
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("oauthLoginType".equals(cookie.getName())) {
@@ -62,14 +65,43 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     cookie.setMaxAge(0);
                     cookie.setPath("/");
                     response.addCookie(cookie);
-                    break;
+                } else if ("oauthMode".equals(cookie.getName())) {
+                    oauthMode = cookie.getValue();
+                    System.out.println("FOUND oauthMode cookie: " + oauthMode);
+                    // Delete the cookie after reading
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
                 }
             }
         }
         
         System.out.println("=== OAUTH DEBUG ===");
         System.out.println("Email: " + email);
+        System.out.println("Google ID (sub): " + googleId);
         System.out.println("Login page from cookie: " + loginPage);
+        System.out.println("OAuth mode: " + oauthMode);
+        
+        // ========== LINK MODE: Check if Google account is already used ==========
+        if ("link".equals(oauthMode)) {
+            // Check if this Google ID is already linked to ANY user
+            Optional<User> userWithGoogleId = userRepository.findByGoogleId(googleId);
+            if (userWithGoogleId.isPresent()) {
+                System.out.println("BLOCKING: Google account already linked to user: " + userWithGoogleId.get().getEmail());
+                String errorRedirect = "http://localhost:5173/auth/callback?error=" + 
+                    URLEncoder.encode("This Google account is already connected to another account.", StandardCharsets.UTF_8);
+                response.sendRedirect(errorRedirect);
+                return;
+            }
+            
+            // Also check if this Google email already exists as a different account
+            Optional<User> userWithEmail = userRepository.findByEmail(email);
+            if (userWithEmail.isPresent()) {
+                // Email exists - this is the account to link to, proceed with login flow
+                // The frontend will handle merging the accounts
+                System.out.println("Google email already exists, proceeding to link");
+            }
+        }
         
         // Check if user exists
         Optional<User> existingUser = userRepository.findByEmail(email);
@@ -78,27 +110,36 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         if (existingUser.isPresent()) {
             user = existingUser.get();
             
-            // ROLE VALIDATION
-            String userRole = user.getUserType().name();
-            
-            System.out.println("User role from DB: " + userRole);
-            System.out.println("Expected login page: " + loginPage);
-            
-            if (loginPage.equals("student") && !userRole.equals("STUDENT")) {
-                System.out.println("BLOCKING: TEACHER trying to use student login");
-                String errorRedirect = "http://localhost:5173/login/student?error=" + 
-                    URLEncoder.encode("This account is registered as a teacher. Please use the teacher login page.", StandardCharsets.UTF_8);
-                response.sendRedirect(errorRedirect);
-                return;
-            } else if (loginPage.equals("teacher") && !userRole.equals("TEACHER")) {
-                System.out.println("BLOCKING: STUDENT trying to use teacher login");
-                String errorRedirect = "http://localhost:5173/login/teacher?error=" + 
-                    URLEncoder.encode("This account is registered as a student. Please use the student login page.", StandardCharsets.UTF_8);
-                response.sendRedirect(errorRedirect);
-                return;
+            // ROLE VALIDATION (only for normal login, not link mode)
+            if (!"link".equals(oauthMode)) {
+                String userRole = user.getUserType().name();
+                
+                System.out.println("User role from DB: " + userRole);
+                System.out.println("Expected login page: " + loginPage);
+                
+                if (loginPage.equals("student") && !userRole.equals("STUDENT")) {
+                    System.out.println("BLOCKING: TEACHER trying to use student login");
+                    String errorRedirect = "http://localhost:5173/login/student?error=" + 
+                        URLEncoder.encode("This account is registered as a teacher. Please use the teacher login page.", StandardCharsets.UTF_8);
+                    response.sendRedirect(errorRedirect);
+                    return;
+                } else if (loginPage.equals("teacher") && !userRole.equals("TEACHER")) {
+                    System.out.println("BLOCKING: STUDENT trying to use teacher login");
+                    String errorRedirect = "http://localhost:5173/login/teacher?error=" + 
+                        URLEncoder.encode("This account is registered as a student. Please use the student login page.", StandardCharsets.UTF_8);
+                    response.sendRedirect(errorRedirect);
+                    return;
+                }
+                
+                System.out.println("Role validation PASSED");
             }
             
-            System.out.println("Role validation PASSED");
+            // Update googleId if not already set (for accounts that existed before this feature)
+            if (user.getGoogleId() == null && googleId != null) {
+                user.setGoogleId(googleId);
+                user = userRepository.save(user);
+                System.out.println("Updated existing user with Google ID");
+            }
             
         } else {
             // Create new user
@@ -107,6 +148,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             user.setFirstname(firstName);
             user.setLastname(lastName);
             user.setPassword("");
+            user.setGoogleId(googleId); // Store Google ID for new users
             
             if (loginPage.equals("teacher")) {
                 user.setUserType(UserType.TEACHER);
@@ -114,7 +156,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 user.setUserType(UserType.STUDENT);
             }
             
-            System.out.println("Creating NEW user with role: " + user.getUserType());
+            System.out.println("Creating NEW user with role: " + user.getUserType() + " and Google ID: " + googleId);
             user = userRepository.save(user);
         }
         
