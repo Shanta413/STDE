@@ -116,7 +116,7 @@ export default function Profile() {
       <Sidebar />
 
       <div className="main-content">
-        <div className="header">
+        <div className="header animate-fade-in-down">
           <div className="breadcrumb">
             <span className="breadcrumb-item">Pages</span>
             <span className="breadcrumb-separator">/</span>
@@ -125,9 +125,9 @@ export default function Profile() {
           <h1 className="page-title">My Profile</h1>
         </div>
 
-        <div className="profile-card">
+        <div className="profile-card animate-slide-in" style={{ animationDelay: '100ms' }}>
           <div className="profile-header">
-            <div className="avatar-section">
+            <div className="avatar-section animate-fade-in" style={{ animationDelay: '300ms' }}>
               <div className="avatar-large">
                 {user.avatarUrl ? (
                   <img src={user.avatarUrl} alt="Profile" />
@@ -144,6 +144,7 @@ export default function Profile() {
             </div>
 
             {/* CONNECT BUTTON */}
+            <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
             <button
               onClick={handleConnectGoogle}
               className="connect-drive-btn"
@@ -172,6 +173,7 @@ export default function Profile() {
               </svg>
               Connect Google Drive
             </button>
+            </div>
           </div>
 
           <div className="profile-body">
@@ -206,7 +208,7 @@ export default function Profile() {
             </div>
 
             <div className="info-grid">
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '500ms' }}>
                 <label className="info-label">First Name</label>
                 {isEditing ? (
                   <input
@@ -220,7 +222,7 @@ export default function Profile() {
                 )}
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '600ms' }}>
                 <label className="info-label">Last Name</label>
                 {isEditing ? (
                   <input
@@ -234,7 +236,7 @@ export default function Profile() {
                 )}
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '700ms' }}>
                 <label className="info-label">Email Address</label>
                 <div className="info-value">
                   <span className="badge badge-blue" style={{ textTransform: 'none' }}>
@@ -248,7 +250,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '800ms' }}>
                 <label className="info-label">Account Type</label>
                 <div className="info-value">
                   <span className={`badge ${user.userType === 'STUDENT' ? 'badge-blue' : 'badge-green'}`}>
@@ -257,7 +259,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '900ms' }}>
                 <label className="info-label">User ID</label>
                 <div className="info-value info-value-small">{user.id}</div>
               </div>

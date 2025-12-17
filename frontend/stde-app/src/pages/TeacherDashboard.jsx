@@ -53,7 +53,7 @@ export default function TeacherDashboard() {
     <div className="ai-evaluate-container">
       <Sidebar />
       <div className="main-content">
-        <div className="header">
+        <div className="header animate-fade-in-down">
           <div className="breadcrumb">
             <span className="breadcrumb-item">Pages</span>
             <span className="breadcrumb-separator">/</span>
@@ -64,7 +64,7 @@ export default function TeacherDashboard() {
 
         {/* Stats Grid */}
         <div className="stats-grid">
-          <div className="stat-card">
+          <div className="stat-card animate-slide-in" style={{ animationDelay: '100ms' }}>
             <div className="stat-icon blue">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -76,7 +76,7 @@ export default function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card animate-slide-in" style={{ animationDelay: '200ms' }}>
             <div className="stat-icon green">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -88,7 +88,7 @@ export default function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card animate-slide-in" style={{ animationDelay: '300ms' }}>
             <div className="stat-icon pink">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -102,7 +102,7 @@ export default function TeacherDashboard() {
         </div>
 
         {/* Recent Activity Table */}
-        <div className="my-uploads-section">
+        <div className="my-uploads-section animate-slide-in" style={{ animationDelay: '400ms' }}>
           <div className="section-header">
             <h2 className="section-title">Recent Student Submissions</h2>
           </div>
@@ -120,8 +120,17 @@ export default function TeacherDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {stats.recentActivity.map((doc) => (
-                        <tr key={doc.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                      {stats.recentActivity.map((doc, index) => (
+                        <tr 
+                          key={doc.id} 
+                          className="animate-slide-in"
+                          style={{ 
+                            borderBottom: '1px solid #e2e8f0',
+                            animationDelay: `${500 + index * 50}ms`,
+                            opacity: 0,
+                            animationFillMode: 'forwards'
+                          }}
+                        >
                           {/* ✅ FIXED: Added specific color to override white text */}
                           <td style={{ padding: '1rem', fontWeight: '600', color: '#1e293b' }}>{doc.studentName}</td>
 

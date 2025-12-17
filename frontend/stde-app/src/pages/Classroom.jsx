@@ -75,7 +75,7 @@ export default function Classroom() {
     <div className="ai-evaluate-container">
       <Sidebar />
       <div className="main-content">
-        <div className="header">
+        <div className="header animate-fade-in-down">
           <div className="breadcrumb">
             <span className="breadcrumb-item">Pages</span>
             <span className="breadcrumb-separator">/</span>
@@ -84,28 +84,28 @@ export default function Classroom() {
           <h1 className="page-title">Classroom</h1>
         </div>
 
-        <div className="classroom-header">
+        <div className="classroom-header animate-slide-in" style={{ animationDelay: '100ms' }}>
           <button className="join-class-btn" onClick={() => setShowJoinModal(true)}>
             + Join Classroom
           </button>
         </div>
 
-        <div className="section-title" style={{ marginTop: 12 }}>My Classes</div>
+        <div className="section-title animate-slide-in" style={{ marginTop: 12, animationDelay: '200ms' }}>My Classes</div>
 
         {loading ? (
-          <p>Loading classes...</p>
+          <p className="animate-fade-in">Loading classes...</p>
         ) : classes.length === 0 ? (
-          <div className="empty-state">
+          <div className="empty-state animate-fade-in">
             <p>You haven't joined any classes yet.</p>
           </div>
         ) : (
           <div className="class-cards-grid">
-            {classes.map(cls => (
+            {classes.map((cls, index) => (
               <div
                 key={cls.id}
-                className="class-card"
+                className="class-card animate-slide-in"
                 onClick={() => handleClassClick(cls.id)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', animationDelay: `${300 + index * 100}ms` }}
               >
                 <div
                   className="class-card-banner"
@@ -127,8 +127,8 @@ export default function Classroom() {
 
         {/* Join Class Modal */}
         {showJoinModal && (
-          <div className="modal-overlay" onClick={() => setShowJoinModal(false)}>
-            <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+          <div className="modal-overlay animate-fade-in" onClick={() => setShowJoinModal(false)}>
+            <div className="modal-content animate-slide-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
               <div className="modal-header">
                 <h2>Join a Classroom</h2>
                 <button className="modal-close" onClick={() => setShowJoinModal(false)}>×</button>

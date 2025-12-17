@@ -789,3 +789,56 @@
     padding: 1.5rem;
   }
 }
+
+/* Skeleton Loading */
+.skeleton {
+  background: #e2e8f0;
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.skeleton-text {
+  height: 1rem;
+  width: 100%;
+}
+
+.skeleton-title {
+  height: 2.5rem;
+  width: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-subtitle {
+  height: 1rem;
+  width: 30%;
+  margin-bottom: 1rem;
+}
+
+.skeleton-badge {
+  height: 2rem;
+  width: 150px;
+  border-radius: 8px;
+}
+
+.skeleton-btn {
+  height: 2.5rem;
+  width: 150px;
+  border-radius: 8px;
+}
+
+.skeleton-table {
+  width: 100%;
+  border-spacing: 0 1rem;
+}
+
+.skeleton-row {
+  height: 4rem;
+  background: white;
+  border-radius: 8px;
+}

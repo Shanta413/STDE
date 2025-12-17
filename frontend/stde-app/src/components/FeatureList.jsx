@@ -1,10 +1,14 @@
 import '../css/FeatureList.css';
 
-export default function FeatureList({ features = [], variant = 'light' }) {
+export default function FeatureList({ features = [], variant = 'light', delay = 0 }) {
   return (
     <div className={`feature-list feature-list-${variant}`}>
       {features.map((feature, index) => (
-        <div key={index} className="feature-item">
+        <div 
+          key={index} 
+          className="feature-item animate-slide-in"
+          style={{ animationDelay: `${delay + index * 100}ms` }}
+        >
           <div className="feature-checkmark">
             <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
               <path

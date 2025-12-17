@@ -153,7 +153,7 @@ export default function TeacherClassroom() {
     <>
       <Sidebar />
       <div className="teacher-classroom">
-        <div className="classroom-header">
+        <div className="classroom-header animate-fade-in-down">
           <div>
             <h1 className="classroom-title">My Classrooms</h1>
             <p className="classroom-subtitle">Manage your courses and student submissions</p>
@@ -167,11 +167,12 @@ export default function TeacherClassroom() {
         </div>
 
         <div className="classroom-grid">
-          {classrooms.map((classroom) => (
+          {classrooms.map((classroom, index) => (
             <div
               key={classroom.id}
-              className="classroom-card"
+              className="classroom-card animate-slide-in"
               onClick={() => handleClassroomClick(classroom.id)}
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="classroom-card-header" style={{ backgroundColor: classroom.color }}>
                 <div className="classroom-pattern"></div>
@@ -215,8 +216,8 @@ export default function TeacherClassroom() {
         </div>
 
         {showModal && (
-          <div className="modal-overlay" onClick={() => setShowModal(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-overlay animate-fade-in" onClick={() => setShowModal(false)}>
+            <div className="modal-content animate-slide-in" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>{isEditing ? "Edit Classroom" : "Create New Classroom"}</h2>
                 <button className="modal-close" onClick={() => setShowModal(false)}>×</button>

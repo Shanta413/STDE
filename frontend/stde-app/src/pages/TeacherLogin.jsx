@@ -64,13 +64,13 @@ export default function TeacherLogin() {
     >
       <div className="auth-form-wrapper">
         {/* Logo */}
-        <div className="auth-logo">
+        <div className="auth-logo animate-slide-in" style={{ animationDelay: '100ms' }}>
           <div className="auth-logo-icon">S</div>
           <span className="auth-logo-text">STDE</span>
         </div>
 
         {/* Header */}
-        <div className="auth-header">
+        <div className="auth-header animate-slide-in" style={{ animationDelay: '200ms' }}>
           <h2 className="auth-form-title">Teacher Login</h2>
           <p className="auth-form-subtitle">
             Don't have an account?{' '}
@@ -79,7 +79,7 @@ export default function TeacherLogin() {
         </div>
 
         {/* Error Message */}
-        {error && <div className="auth-error">{error}</div>}
+        {error && <div className="auth-error animate-fade-in">{error}</div>}
 
         {/* Form */}
         <form className="auth-form" onSubmit={handleSubmit}>
@@ -91,6 +91,8 @@ export default function TeacherLogin() {
             onChange={(e) => setEmail(e.target.value)}
             required
             disabled={loading}
+            className="animate-slide-in"
+            style={{ animationDelay: '300ms' }}
           />
 
           <PasswordInput
@@ -102,17 +104,21 @@ export default function TeacherLogin() {
             disabled={loading}
             showForgotPassword
             onForgotPassword={handleForgotPassword}
+            className="animate-slide-in"
+            style={{ animationDelay: '400ms' }}
           />
 
-          <button
-            type="submit"
-            className="auth-submit-btn"
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign in'}
-          </button>
+          <div className="animate-slide-in" style={{ animationDelay: '500ms' }}>
+            <button
+              type="submit"
+              className="auth-submit-btn"
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </div>
 
-          <div className="auth-divider">
+          <div className="auth-divider animate-slide-in" style={{ animationDelay: '600ms' }}>
             <span>OR</span>
           </div>
 
@@ -120,17 +126,18 @@ export default function TeacherLogin() {
             provider="google"
             onClick={handleGoogleLogin}
             disabled={loading}
+            delay={700}
           />
         </form>
 
         {/* Switch Role */}
-        <p className="auth-switch-role">
+        <p className="auth-switch-role animate-slide-in" style={{ animationDelay: '800ms' }}>
           Are you a student?{' '}
           <Link to="/login/student" className="auth-link">Login here</Link>
         </p>
 
         {/* Footer */}
-        <p className="auth-footer">Capstone Project 2025</p>
+        <p className="auth-footer animate-slide-in" style={{ animationDelay: '900ms' }}>Capstone Project 2025</p>
       </div>
     </AuthLayout>
   );

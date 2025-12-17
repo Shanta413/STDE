@@ -136,7 +136,7 @@ export default function TeacherProfile() {
       <Sidebar />
 
       <div className="main-content">
-        <div className="header">
+        <div className="header animate-fade-in-down">
           <div className="breadcrumb">
             <span className="breadcrumb-item">Pages</span>
             <span className="breadcrumb-separator">/</span>
@@ -147,19 +147,19 @@ export default function TeacherProfile() {
 
         {/* Stats Cards */}
         <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-          <div className="stat-card" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '1.5rem', borderRadius: '12px', color: 'white' }}>
+          <div className="stat-card animate-slide-in" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '1.5rem', borderRadius: '12px', color: 'white', animationDelay: '100ms' }}>
             <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.totalClassrooms}</div>
             <div style={{ opacity: 0.9, marginTop: '0.5rem' }}>Total Classrooms</div>
           </div>
-          <div className="stat-card" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', padding: '1.5rem', borderRadius: '12px', color: 'white' }}>
+          <div className="stat-card animate-slide-in" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', padding: '1.5rem', borderRadius: '12px', color: 'white', animationDelay: '200ms' }}>
             <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>{stats.totalStudents}</div>
             <div style={{ opacity: 0.9, marginTop: '0.5rem' }}>Total Students</div>
           </div>
         </div>
 
-        <div className="profile-card">
+        <div className="profile-card animate-slide-in" style={{ animationDelay: '300ms' }}>
           <div className="profile-header">
-            <div className="avatar-section">
+            <div className="avatar-section animate-fade-in" style={{ animationDelay: '400ms' }}>
               <div className="avatar-large">
                 {user.avatarUrl ? (
                   <img src={user.avatarUrl} alt="Profile" />
@@ -176,6 +176,7 @@ export default function TeacherProfile() {
             </div>
 
             {/* ✅ NEW: CONNECT BUTTON */}
+            <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
             <button
               onClick={handleConnectGoogle}
               className="connect-drive-btn"
@@ -204,6 +205,7 @@ export default function TeacherProfile() {
               </svg>
               Connect Google Drive
             </button>
+            </div>
           </div>
 
           <div className="profile-body">
@@ -238,7 +240,7 @@ export default function TeacherProfile() {
             </div>
 
             <div className="info-grid">
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '600ms' }}>
                 <label className="info-label">First Name</label>
                 {isEditing ? (
                   <input
@@ -252,7 +254,7 @@ export default function TeacherProfile() {
                 )}
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '700ms' }}>
                 <label className="info-label">Last Name</label>
                 {isEditing ? (
                   <input
@@ -266,7 +268,7 @@ export default function TeacherProfile() {
                 )}
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '800ms' }}>
                 <label className="info-label">Email Address</label>
                 <div className="info-value">
                   <span className="badge badge-green" style={{ textTransform: 'none' }}>
@@ -280,14 +282,14 @@ export default function TeacherProfile() {
                 </div>
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '900ms' }}>
                 <label className="info-label">Account Type</label>
                 <div className="info-value">
                   <span className="badge badge-green">TEACHER</span>
                 </div>
               </div>
 
-              <div className="info-item">
+              <div className="info-item animate-slide-in" style={{ animationDelay: '1000ms' }}>
                 <label className="info-label">User ID</label>
                 <div className="info-value info-value-small">{user.id}</div>
               </div>
