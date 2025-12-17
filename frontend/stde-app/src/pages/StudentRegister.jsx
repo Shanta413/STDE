@@ -13,7 +13,6 @@ export default function StudentRegister() {
     firstName: '',
     lastName: '',
     email: '',
-    studentId: '',
     password: '',
     confirmPassword: ''
   });
@@ -35,12 +34,12 @@ export default function StudentRegister() {
     setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match!');
+      setError('Passwords do not match.');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError('Password must be at least 6 characters long.');
       return;
     }
 
@@ -48,8 +47,8 @@ export default function StudentRegister() {
 
     try {
       await authService.register({
-        firstName: formData.firstName,
-        familyName: formData.lastName,
+        firstname: formData.firstName,
+        lastname: formData.lastName,
         email: formData.email,
         password: formData.password,
         userType: 'STUDENT'
@@ -59,7 +58,7 @@ export default function StudentRegister() {
         state: { message: 'Registration successful! Please log in.' }
       });
     } catch (err) {
-      setError(err || 'Registration failed. Please try again.');
+      setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -72,18 +71,16 @@ export default function StudentRegister() {
   return (
     <AuthLayout
       title="AI-Powered Documentation Analysis"
-      subtitle="Revolutionize your software testing workflow with intelligent evaluation and insights powered by advanced AI technology."
+      subtitle="Revolutionize your software testing workflow with intelligent evaluation."
       features={features}
     >
       <div className="auth-form-wrapper">
-        {/* Logo */}
-        <div className="auth-logo animate-slide-in" style={{ animationDelay: '100ms' }}>
+        <div className="auth-logo">
           <div className="auth-logo-icon">S</div>
           <span className="auth-logo-text">STDE</span>
         </div>
 
-        {/* Header */}
-        <div className="auth-header animate-slide-in" style={{ animationDelay: '200ms' }}>
+        <div className="auth-header">
           <h2 className="auth-form-title">Create Student Account</h2>
           <p className="auth-form-subtitle">
             Already have an account?{' '}
@@ -91,113 +88,71 @@ export default function StudentRegister() {
           </p>
         </div>
 
-        {/* Error Message */}
-        {error && <div className="auth-error animate-fade-in">{error}</div>}
+        {error && <div className="auth-error">{error}</div>}
 
-        {/* Form */}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-form-row">
             <InputField
               label="First Name"
-              type="text"
-              placeholder="John"
               value={formData.firstName}
               onChange={(e) => updateField('firstName', e.target.value)}
               required
               disabled={loading}
-              className="animate-slide-in"
-              style={{ animationDelay: '300ms' }}
             />
             <InputField
               label="Last Name"
-              type="text"
-              placeholder="Doe"
               value={formData.lastName}
               onChange={(e) => updateField('lastName', e.target.value)}
               required
               disabled={loading}
-              className="animate-slide-in"
-              style={{ animationDelay: '350ms' }}
             />
           </div>
 
           <InputField
             label="Email"
             type="email"
-            placeholder="student@university.edu"
             value={formData.email}
             onChange={(e) => updateField('email', e.target.value)}
             required
             disabled={loading}
-            className="animate-slide-in"
-            style={{ animationDelay: '400ms' }}
-          />
-
-          <InputField
-            label="Student ID"
-            type="text"
-            placeholder="20XX-XXXXX"
-            value={formData.studentId}
-            onChange={(e) => updateField('studentId', e.target.value)}
-            required
-            disabled={loading}
-            className="animate-slide-in"
-            style={{ animationDelay: '450ms' }}
           />
 
           <PasswordInput
             label="Password"
-            placeholder="Create a password"
             value={formData.password}
             onChange={(e) => updateField('password', e.target.value)}
             required
             disabled={loading}
-            className="animate-slide-in"
-            style={{ animationDelay: '500ms' }}
           />
 
           <PasswordInput
             label="Confirm Password"
-            placeholder="Confirm your password"
             value={formData.confirmPassword}
             onChange={(e) => updateField('confirmPassword', e.target.value)}
             required
             disabled={loading}
-            className="animate-slide-in"
-            style={{ animationDelay: '550ms' }}
           />
 
-          <div className="animate-slide-in" style={{ animationDelay: '600ms' }}>
-            <button
-              type="submit"
-              className="auth-submit-btn"
-              disabled={loading}
-            >
-              {loading ? 'Creating account...' : 'Create Account'}
-            </button>
-          </div>
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? 'Creating account...' : 'Create Account'}
+          </button>
 
-          <div className="auth-divider animate-slide-in" style={{ animationDelay: '650ms' }}>
-            <span>OR</span>
-          </div>
+          <div className="auth-divider"><span>OR</span></div>
 
           <SocialButton
             provider="google"
             onClick={handleGoogleSignup}
             disabled={loading}
             text="Sign up with Google"
-            delay={700}
           />
         </form>
 
-        {/* Switch Role */}
-        <p className="auth-switch-role animate-slide-in" style={{ animationDelay: '800ms' }}>
+        <p className="auth-switch-role">
           Are you a teacher?{' '}
           <Link to="/register/teacher" className="auth-link">Register here</Link>
         </p>
 
-        {/* Footer */}
-        <p className="auth-footer animate-slide-in" style={{ animationDelay: '900ms' }}>Capstone Project 2025</p>
+        <p className="auth-footer">Capstone Project 2025</p>
       </div>
     </AuthLayout>
   );
