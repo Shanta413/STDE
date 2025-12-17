@@ -7,14 +7,13 @@ import SocialButton from '../components/SocialButton';
 import authService from '../services/authService';
 import '../css/AuthForms.css';
 
-export default function TeacherRegister() {
+export default function StudentRegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    employeeId: '',
-    department: '',
+    studentId: '',
     password: '',
     confirmPassword: ''
   });
@@ -22,9 +21,9 @@ export default function TeacherRegister() {
   const [error, setError] = useState('');
 
   const features = [
-    'AI grading insights',
-    'Automated scoring',
-    'Classroom integration'
+    'Automated test case evaluation',
+    'Comprehensive quality metrics',
+    'Instant feedback and recommendations'
   ];
 
   const updateField = (field, value) => {
@@ -53,10 +52,10 @@ export default function TeacherRegister() {
         familyName: formData.lastName,
         email: formData.email,
         password: formData.password,
-        userType: 'TEACHER'
+        userType: 'STUDENT'
       });
 
-      navigate('/login/teacher', {
+      navigate('/login/student', {
         state: { message: 'Registration successful! Please log in.' }
       });
     } catch (err) {
@@ -67,13 +66,13 @@ export default function TeacherRegister() {
   };
 
   const handleGoogleSignup = () => {
-    window.location.href = 'http://localhost:8080/api/oauth2/login/teacher';
+    window.location.href = 'http://localhost:8080/api/oauth2/login/student';
   };
 
   return (
     <AuthLayout
       title="AI-Powered Documentation Analysis"
-      subtitle="Evaluate documents with AI, streamline grading, and improve outcomes."
+      subtitle="Revolutionize your software testing workflow with intelligent evaluation and insights powered by advanced AI technology."
       features={features}
     >
       <div className="auth-form-wrapper">
@@ -85,10 +84,10 @@ export default function TeacherRegister() {
 
         {/* Header */}
         <div className="auth-header">
-          <h2 className="auth-form-title">Create Teacher Account</h2>
+          <h2 className="auth-form-title">Create Student Account</h2>
           <p className="auth-form-subtitle">
             Already have an account?{' '}
-            <Link to="/login/teacher" className="auth-link">Sign in</Link>
+            <Link to="/login/student" className="auth-link">Sign in</Link>
           </p>
         </div>
 
@@ -101,7 +100,7 @@ export default function TeacherRegister() {
             <InputField
               label="First Name"
               type="text"
-              placeholder="Jane"
+              placeholder="John"
               value={formData.firstName}
               onChange={(e) => updateField('firstName', e.target.value)}
               required
@@ -110,7 +109,7 @@ export default function TeacherRegister() {
             <InputField
               label="Last Name"
               type="text"
-              placeholder="Smith"
+              placeholder="Doe"
               value={formData.lastName}
               onChange={(e) => updateField('lastName', e.target.value)}
               required
@@ -121,7 +120,7 @@ export default function TeacherRegister() {
           <InputField
             label="Email"
             type="email"
-            placeholder="professor@university.edu"
+            placeholder="student@university.edu"
             value={formData.email}
             onChange={(e) => updateField('email', e.target.value)}
             required
@@ -129,21 +128,11 @@ export default function TeacherRegister() {
           />
 
           <InputField
-            label="Employee ID"
+            label="Student ID"
             type="text"
-            placeholder="EMP-XXXXX"
-            value={formData.employeeId}
-            onChange={(e) => updateField('employeeId', e.target.value)}
-            required
-            disabled={loading}
-          />
-
-          <InputField
-            label="Department"
-            type="text"
-            placeholder="Computer Science"
-            value={formData.department}
-            onChange={(e) => updateField('department', e.target.value)}
+            placeholder="20XX-XXXXX"
+            value={formData.studentId}
+            onChange={(e) => updateField('studentId', e.target.value)}
             required
             disabled={loading}
           />
@@ -188,8 +177,8 @@ export default function TeacherRegister() {
 
         {/* Switch Role */}
         <p className="auth-switch-role">
-          Are you a student?{' '}
-          <Link to="/register/student" className="auth-link">Register here</Link>
+          Are you a teacher?{' '}
+          <Link to="/register/teacher" className="auth-link">Register here</Link>
         </p>
 
         {/* Footer */}

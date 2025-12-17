@@ -7,7 +7,7 @@ import SocialButton from '../components/SocialButton';
 import authService from '../services/authService';
 import '../css/AuthForms.css';
 
-export default function TeacherLogin() {
+export default function StudentLogin() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
@@ -16,9 +16,9 @@ export default function TeacherLogin() {
   const [error, setError] = useState(searchParams.get('error') || '');
 
   const features = [
-    'AI grading insights',
-    'Automated scoring',
-    'Classroom integration'
+    'Automated test case evaluation',
+    'Comprehensive quality metrics',
+    'Instant feedback and recommendations'
   ];
 
   const handleSubmit = async (e) => {
@@ -28,19 +28,21 @@ export default function TeacherLogin() {
 
     try {
       const response = await authService.login({ email, password });
-      const user = response.user;
+      const user = response.user ? response.user : response;
 
-      if (user.userType !== 'TEACHER') {
-        setError('Access denied. This login is for teachers only. Please use the student login page.');
+      if (user.userType !== 'STUDENT') {
+        setError('Access denied. This login is for students only. Please use the teacher login page.');
         authService.logout();
         setLoading(false);
         return;
       }
 
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', response.token);
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
 
-      navigate('/teacher/dashboard');
+      navigate('/student/dashboard');
     } catch (err) {
       setError('Invalid email or password. Please try again.');
     } finally {
@@ -49,7 +51,7 @@ export default function TeacherLogin() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:8080/api/oauth2/login/teacher';
+    window.location.href = 'http://localhost:8080/api/oauth2/login/student';
   };
 
   const handleForgotPassword = () => {
@@ -59,7 +61,7 @@ export default function TeacherLogin() {
   return (
     <AuthLayout
       title="AI-Powered Documentation Analysis"
-      subtitle="Evaluate documents with AI, streamline grading, and improve outcomes."
+      subtitle="Revolutionize your software testing workflow with intelligent evaluation and insights powered by advanced AI technology."
       features={features}
     >
       <div className="auth-form-wrapper">
@@ -71,10 +73,10 @@ export default function TeacherLogin() {
 
         {/* Header */}
         <div className="auth-header">
-          <h2 className="auth-form-title">Teacher Login</h2>
+          <h2 className="auth-form-title">Student Login</h2>
           <p className="auth-form-subtitle">
             Don't have an account?{' '}
-            <Link to="/register/teacher" className="auth-link">Sign up</Link>
+            <Link to="/register/student" className="auth-link">Sign up</Link>
           </p>
         </div>
 
@@ -86,7 +88,7 @@ export default function TeacherLogin() {
           <InputField
             label="Email"
             type="email"
-            placeholder="Teacher email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -95,7 +97,7 @@ export default function TeacherLogin() {
 
           <PasswordInput
             label="Password"
-            placeholder="Enter password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -125,8 +127,8 @@ export default function TeacherLogin() {
 
         {/* Switch Role */}
         <p className="auth-switch-role">
-          Are you a student?{' '}
-          <Link to="/login/student" className="auth-link">Login here</Link>
+          Are you a teacher?{' '}
+          <Link to="/login/teacher" className="auth-link">Login here</Link>
         </p>
 
         {/* Footer */}
