@@ -562,7 +562,7 @@ export default function ClassroomDetails() {
                         <ScoreBadge label="Verification" score={reportData.verificationScore} />
                       </div>
                       <div style={{ backgroundColor: '#799292ff', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}><h4>Overall Assessment</h4><p >{reportData.overallFeedback}</p></div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', color: "#000000" }}>
                         <FeedbackCard title="Completeness" score={reportData.completenessScore} feedback={reportData.completenessFeedback} color="#8b5cf6" />
                         <FeedbackCard title="Clarity" score={reportData.clarityScore} feedback={reportData.clarityFeedback} color="#06b6d4" />
                         <FeedbackCard title="Consistency" score={reportData.consistencyScore} feedback={reportData.consistencyFeedback} color="#10b981" />
