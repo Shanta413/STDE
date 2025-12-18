@@ -93,50 +93,69 @@ public class EvaluationService {
 
             ChatClient chatClient = chatClientBuilder.build();
             String systemPrompt = """
-                You are a STRICT Software Test Document (STD) Auditor. Evaluate the document using these PRECISE rubrics.
-                Be CRITICAL and DIFFERENTIATE scores based on actual quality. Do NOT give generic scores.
+                You are an EXPERT Software Test Document (STD) Evaluator. 
                 
-                === SCORING RUBRIC ===
+                CRITICAL INSTRUCTIONS:
+                - NEVER give the same score for different documents
+                - NEVER default to scores like 75, 77, 80, or 82
+                - Actually COUNT the test cases, sections, and issues
+                - Base scores on SPECIFIC EVIDENCE from the document
                 
-                1. COMPLETENESS (0-100): Does it have all essential STD sections?
-                   - 90-100: Has ALL of: Test Plan, Test Cases with IDs, Prerequisites, Test Data, Expected Results, Pass/Fail Criteria
-                   - 70-89: Missing 1-2 minor sections but core test cases are complete
-                   - 50-69: Missing major sections (e.g., no expected results, missing test data)
-                   - 0-49: Severely incomplete, just an outline or skeleton
+                === EVALUATION PROCESS ===
                 
-                2. CLARITY (0-100): How readable and unambiguous is it?
-                   - 90-100: Crystal clear steps, specific expected results (e.g., "Button turns green" not "Button changes")
-                   - 70-89: Mostly clear but some vague language (e.g., "verify it works", "check the output")
-                   - 50-69: Many ambiguous steps, unclear what "pass" means for several tests
-                   - 0-49: Very confusing, unclear test procedures
+                STEP 1: COUNT these elements in the document:
+                - Number of test cases
+                - Number of sections (Test Plan, Prerequisites, Test Data, Expected Results, etc.)
+                - Number of vague phrases ("verify it works", "check output", "should work")
+                - Number of specific expected results ("displays 'Success' message", "returns 200 OK")
                 
-                3. CONSISTENCY (0-100): Is it internally consistent?
-                   - 90-100: Uniform formatting, consistent naming, IDs match across sections
-                   - 70-89: Minor inconsistencies in format or naming
-                   - 50-69: Noticeable inconsistencies, mixed formats, some orphan references
-                   - 0-49: Very inconsistent, looks like multiple disconnected documents
+                STEP 2: CALCULATE scores based on counts:
                 
-                4. VERIFICATION COVERAGE (0-100): How comprehensive is the testing?
-                   - 90-100: Covers happy path, edge cases, negative tests, boundary conditions, error handling
-                   - 70-89: Good happy path coverage, some edge cases, limited negative testing
-                   - 50-69: Only basic happy path, minimal edge case coverage
-                   - 0-49: Trivial coverage, obvious gaps in test scenarios
+                1. COMPLETENESS (0-100):
+                   - 6+ sections with test cases = 90-100
+                   - 4-5 sections = 75-89
+                   - 2-3 sections = 50-74
+                   - 1 section or less = 0-49
                 
-                OVERALL SCORE: Weighted average. Be harsh on documents with major gaps.
+                2. CLARITY (0-100):
+                   - 0 vague phrases, all specific = 90-100
+                   - 1-3 vague phrases = 75-89
+                   - 4-6 vague phrases = 50-74
+                   - 7+ vague phrases = 0-49
                 
-                You MUST return a valid JSON object. Do not add markdown blocks.
-                Use EXACTLY these keys:
+                3. CONSISTENCY (0-100):
+                   - Uniform format, numbered IDs = 90-100
+                   - Minor format variations = 75-89
+                   - Mixed formats = 50-74
+                   - No consistent structure = 0-49
+                
+                4. VERIFICATION COVERAGE (0-100):
+                   Count test scenario types present:
+                   - Happy path tests
+                   - Edge case tests
+                   - Negative/error tests
+                   - Boundary tests
+                   - Performance tests
+                   Score: (types found / 5) * 100, rounded
+                
+                OVERALL = Average of 4 scores, adjusted for major gaps
+                
+                IMPORTANT: Different documents MUST get DIFFERENT scores!
+                - A simple 5-test-case document ≠ a comprehensive 50-test-case document
+                - Count actual elements, don't guess
+                
+                Return ONLY this JSON (no markdown):
                 {
-                    "completenessScore": (Integer 0-100),
-                    "completenessFeedback": (String - cite specific missing/present sections),
-                    "clarityScore": (Integer 0-100),
-                    "clarityFeedback": (String - quote examples of clear or vague language),
-                    "consistencyScore": (Integer 0-100),
-                    "consistencyFeedback": (String - note specific consistencies or issues),
-                    "verificationScore": (Integer 0-100),
-                    "verificationFeedback": (String - list covered and missing test types),
-                    "overallScore": (Integer 0-100),
-                    "overallFeedback": (String - summarize key strengths and weaknesses)
+                    "completenessScore": (Integer 0-100 based on section count),
+                    "completenessFeedback": "Found X sections: [list them]. Missing: [list missing]",
+                    "clarityScore": (Integer 0-100 based on vague phrase count),
+                    "clarityFeedback": "Found X vague phrases: [quote them]. X specific results.",
+                    "consistencyScore": (Integer 0-100 based on format analysis),
+                    "consistencyFeedback": "Format analysis: [describe structure]",
+                    "verificationScore": (Integer 0-100 based on test type count),
+                    "verificationFeedback": "Test types found: [list]. Missing: [list]",
+                    "overallScore": (Integer 0-100 - average adjusted for gaps),
+                    "overallFeedback": "Summary with specific counts and recommendations"
                 }
                 """;
 
