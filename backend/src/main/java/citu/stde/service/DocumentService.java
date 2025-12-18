@@ -45,7 +45,8 @@ public class DocumentService {
     private final UserRepository userRepository;
     private final EvaluationRepository evaluationRepository; 
     private final OAuth2AuthorizedClientService clientService;
-    private final AdminService adminService; 
+    private final AdminService adminService;
+    private final EvaluationService evaluationService;
 
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -93,6 +94,13 @@ public class DocumentService {
 
     public DocumentDTO uploadDocument(MultipartFile file, UUID userId, UUID classId) throws IOException {
         if (file.isEmpty()) throw new IllegalArgumentException("File is empty");
+        
+        // === VALIDATE DOCUMENT IS AN STD BEFORE UPLOAD ===
+        String fileContent = evaluationService.extractTextFromFile(file);
+        if (!evaluationService.validateDocumentContent(fileContent)) {
+            throw new IllegalArgumentException("This file is not a Software Testing Document. Only STD files (test cases, test plans, bug reports) are accepted.");
+        }
+        // === END VALIDATION ===
         
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -187,6 +195,19 @@ public class DocumentService {
         File copiedFile = userDriveService.files().copy(originalFileId, copyMetadata)
                 .setFields("id, name, webViewLink, size, mimeType")
                 .execute();
+
+        // === VALIDATE DOCUMENT IS AN STD ===
+        boolean isValidSTD = evaluationService.validateDriveFile(copiedFile.getId(), copiedFile.getMimeType());
+        if (!isValidSTD) {
+            // Delete the copied file since it's not valid
+            try {
+                googleDriveService.deleteFile(copiedFile.getId());
+            } catch (Exception e) {
+                System.err.println("Failed to cleanup invalid file: " + e.getMessage());
+            }
+            throw new IllegalArgumentException("This file is not a Software Testing Document. Only STD files (test cases, test plans, bug reports) are accepted.");
+        }
+        // === END VALIDATION ===
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

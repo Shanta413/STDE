@@ -28,15 +28,33 @@ public class EvaluationController {
         try {
             UUID userId = getUserId(authentication);
             return ResponseEntity.ok(evaluationService.evaluateDocument(documentId, userId));
+        } catch (IllegalArgumentException e) {
+            // Handle invalid document type error
+            if (e.getMessage() != null && e.getMessage().contains("TYPE:INVALID_DOCUMENT")) {
+                String cleanMessage = e.getMessage().replace("TYPE:INVALID_DOCUMENT|", "");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", cleanMessage));
+            }
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
-            // Check for our custom Quota error
-            if (e.getMessage().contains("TYPE:QUOTA_EXCEEDED")) {
+            // Handle quota exceeded error
+            if (e.getMessage() != null && e.getMessage().contains("TYPE:QUOTA_EXCEEDED")) {
                 String cleanMessage = e.getMessage().replace("TYPE:QUOTA_EXCEEDED|", "");
                 return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Map.of("error", cleanMessage));
+            }
+            // Handle rate limit error
+            if (e.getMessage() != null && e.getMessage().contains("TYPE:RATE_LIMIT")) {
+                String cleanMessage = e.getMessage().replace("TYPE:RATE_LIMIT|", "");
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Map.of("error", cleanMessage));
+            }
+            // Handle server error
+            if (e.getMessage() != null && e.getMessage().contains("TYPE:SERVER_ERROR")) {
+                String cleanMessage = e.getMessage().replace("TYPE:SERVER_ERROR|", "");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", cleanMessage));
             }
             throw e;
         }
     }
+
 
     // Get Usage Stats
     @GetMapping("/usage")

@@ -18,6 +18,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,21 +93,50 @@ public class EvaluationService {
 
             ChatClient chatClient = chatClientBuilder.build();
             String systemPrompt = """
-                You are a strict QA Auditor. Evaluate the software test document on 4 criteria.
-                You MUST return a valid JSON object. Do not add markdown blocks.
+                You are a STRICT Software Test Document (STD) Auditor. Evaluate the document using these PRECISE rubrics.
+                Be CRITICAL and DIFFERENTIATE scores based on actual quality. Do NOT give generic scores.
                 
+                === SCORING RUBRIC ===
+                
+                1. COMPLETENESS (0-100): Does it have all essential STD sections?
+                   - 90-100: Has ALL of: Test Plan, Test Cases with IDs, Prerequisites, Test Data, Expected Results, Pass/Fail Criteria
+                   - 70-89: Missing 1-2 minor sections but core test cases are complete
+                   - 50-69: Missing major sections (e.g., no expected results, missing test data)
+                   - 0-49: Severely incomplete, just an outline or skeleton
+                
+                2. CLARITY (0-100): How readable and unambiguous is it?
+                   - 90-100: Crystal clear steps, specific expected results (e.g., "Button turns green" not "Button changes")
+                   - 70-89: Mostly clear but some vague language (e.g., "verify it works", "check the output")
+                   - 50-69: Many ambiguous steps, unclear what "pass" means for several tests
+                   - 0-49: Very confusing, unclear test procedures
+                
+                3. CONSISTENCY (0-100): Is it internally consistent?
+                   - 90-100: Uniform formatting, consistent naming, IDs match across sections
+                   - 70-89: Minor inconsistencies in format or naming
+                   - 50-69: Noticeable inconsistencies, mixed formats, some orphan references
+                   - 0-49: Very inconsistent, looks like multiple disconnected documents
+                
+                4. VERIFICATION COVERAGE (0-100): How comprehensive is the testing?
+                   - 90-100: Covers happy path, edge cases, negative tests, boundary conditions, error handling
+                   - 70-89: Good happy path coverage, some edge cases, limited negative testing
+                   - 50-69: Only basic happy path, minimal edge case coverage
+                   - 0-49: Trivial coverage, obvious gaps in test scenarios
+                
+                OVERALL SCORE: Weighted average. Be harsh on documents with major gaps.
+                
+                You MUST return a valid JSON object. Do not add markdown blocks.
                 Use EXACTLY these keys:
                 {
                     "completenessScore": (Integer 0-100),
-                    "completenessFeedback": (String),
+                    "completenessFeedback": (String - cite specific missing/present sections),
                     "clarityScore": (Integer 0-100),
-                    "clarityFeedback": (String),
+                    "clarityFeedback": (String - quote examples of clear or vague language),
                     "consistencyScore": (Integer 0-100),
-                    "consistencyFeedback": (String),
+                    "consistencyFeedback": (String - note specific consistencies or issues),
                     "verificationScore": (Integer 0-100),
-                    "verificationFeedback": (String),
+                    "verificationFeedback": (String - list covered and missing test types),
                     "overallScore": (Integer 0-100),
-                    "overallFeedback": (String)
+                    "overallFeedback": (String - summarize key strengths and weaknesses)
                 }
                 """;
 
@@ -296,13 +326,89 @@ public class EvaluationService {
         try (XWPFDocument document = new XWPFDocument(inputStream)) { return new XWPFWordExtractor(document).getText(); }
     }
 
+    /**
+     * Public method to validate if file content is an STD.
+     * Called by DocumentService during upload to reject non-STD files immediately.
+     */
+    public boolean validateDocumentContent(String content) {
+        return isValidSoftwareTestingDocument(content);
+    }
+
+    /**
+     * Extract text from a MultipartFile for validation purposes.
+     */
+    public String extractTextFromFile(MultipartFile file) throws IOException {
+        String contentType = file.getContentType();
+        try (InputStream inputStream = file.getInputStream()) {
+            if ("application/pdf".equals(contentType)) {
+                return extractTextFromPDF(inputStream);
+            } else if ("application/vnd.openxmlformats-officedocument.wordprocessingml.document".equals(contentType)) {
+                return extractTextFromDOCX(inputStream);
+            } else {
+                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            }
+        }
+    }
+
+    /**
+     * Validate a file from Google Drive by its file ID and mime type.
+     * Used for Drive imports to reject non-STD files.
+     */
+    public boolean validateDriveFile(String driveFileId, String mimeType) {
+        try (InputStream inputStream = googleDriveService.downloadFile(driveFileId)) {
+            String content;
+            if ("application/pdf".equals(mimeType)) {
+                content = extractTextFromPDF(inputStream);
+            } else if ("application/vnd.openxmlformats-officedocument.wordprocessingml.document".equals(mimeType)) {
+                content = extractTextFromDOCX(inputStream);
+            } else {
+                content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            }
+            return isValidSoftwareTestingDocument(content);
+        } catch (Exception e) {
+            System.err.println("Drive file validation error: " + e.getMessage());
+            return false; // Fail safely
+        }
+    }
+
     private boolean isValidSoftwareTestingDocument(String content) {
         try {
             ChatClient chatClient = chatClientBuilder.build();
-            String validationPrompt = "Respond with ONLY \"YES\" if it is a Software Testing Document, or \"NO\".";
+            String validationPrompt = """
+                You are a STRICT document classifier. Determine if this is a SOFTWARE TESTING DOCUMENT (STD).
+                
+                A VALID STD must contain ACTUAL TEST CONTENT such as:
+                - Test cases with steps to execute
+                - Test scenarios or test scripts
+                - Test results or bug reports
+                - QA test procedures
+                - Unit/Integration/System test documentation
+                
+                REJECT these (they are NOT STDs even if software-related):
+                - SRS (Software Requirements Specification) - contains requirements, not tests
+                - FRS (Functional Requirements Specification) - contains features, not tests
+                - Design Documents - contains architecture, not tests
+                - User Manuals - contains instructions, not tests
+                - Project Proposals - contains plans, not tests
+                - Meeting Minutes, Essays, Resumes, or any non-testing content
+                
+                Look for keywords like: "Test Case ID", "Test Steps", "Expected Result", "Actual Result", 
+                "Pass/Fail", "Test Scenario", "Preconditions", "Test Data", "Bug Report", "Defect".
+                
+                If you see mostly REQUIREMENTS (shall, must, should) instead of TEST STEPS, respond "NO".
+                
+                Respond with ONLY "YES" or "NO".
+                """;
             String aiResponse = chatClient.prompt().system(validationPrompt).user(u -> u.text(content)).call().content();
-            return aiResponse != null && aiResponse.trim().equalsIgnoreCase("YES");
-        } catch (Exception e) { return true; }
+            boolean isValid = aiResponse != null && aiResponse.trim().toUpperCase().startsWith("YES");
+            if (!isValid) {
+                System.out.println("Document rejected - not recognized as STD. AI Response: " + aiResponse);
+            }
+            return isValid;
+        } catch (Exception e) { 
+            System.err.println("STD validation error (will reject document): " + e.getMessage());
+            return false; // Fail safely - require valid response
+        }
     }
 
     private String truncateContent(String content) {
